@@ -1,0 +1,30 @@
+{
+    "name": "sam-it/yii2-static-assets",
+    "description": "Generate static assets and build a docker nginx container",
+    "type": "yii2-extension",
+    "require-dev": {
+        "yiisoft/yii2": "^2.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sam Mousa",
+            "email": "sam@mousa.nl"
+        }
+    ],
+    "require": {},
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "SamIT\\Yii2\\StaticAssets\\": ["src/"]
+        }
+    },
+    "extra": {
+        "bootstrap": "SamIT\\Yii2\\StaticAssets\\Bootstrap"
+    }
+}
