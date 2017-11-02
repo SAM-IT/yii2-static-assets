@@ -50,7 +50,16 @@ class AssetHelper extends \stdClass implements DummyInterface
             $namespace = StringHelper::dirname($class);
             $class = StringHelper::basename($class);
             try {
-                eval("namespace $namespace { class $class{}; }");
+
+                if (stripos($class, 'interface') !== false) {
+                    $code = "namespace $namespace { interface $class{} }";
+                } else {
+                    $code = "namespace $namespace { class $class{} }";
+                }
+
+                echo "Stubbing $class with the following code: $code\n";
+                eval($code);
+
             } catch (\Throwable $t) {
 
             }
@@ -96,21 +105,39 @@ class AssetHelper extends \stdClass implements DummyInterface
         $tokens = token_get_all($contents);
 //        echo "OK\n";
         $namespace = self::parseNameSpace($tokens);
-        // Exclude some prefixes.
+
+        $excludeClasses = [
+            '/test/i'
+        ];
+        $excludeNamespaces = [
+            '/^Composer/',
+            '/^Symfony/',
+            '/^Codeception/',
+            '/^yii\\composer/',
+            '/test/i'
+        ];
+        // Exclude some namespaces.
         foreach([
-            'Composer',
-            'yii\\composer'
-        ] as $prefix) {
-            if (strncmp($namespace, $prefix, strlen($prefix)) === 0) {
+
+        ] as $regex) {
+            if (preg_match($regex, $namespace)) {
                 return [];
             }
+
         }
         $classes = [];
         // Parse all classes.
         while (true) {
             $class = self::parseClass($tokens);
+
+            // Exclude some classes.
             if (!isset($class)) {
                 break;
+            }
+            foreach($excludeClasses as $regex) {
+                if (preg_match($regex, $namespace)) {
+                    continue;
+                }
             }
             $classes[] = "$namespace\\$class";
         }
