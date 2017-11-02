@@ -21,7 +21,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "SamIT\\Yii2\\StaticAssets\\": ["src/"]
+            "SamIT\\Yii2\\StaticAssets\\": "src/"
         }
     },
     "extra": {
