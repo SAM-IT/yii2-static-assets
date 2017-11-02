@@ -16,16 +16,15 @@ server {
 
     location ^~ /assets {
         try_files $uri =404;
-
     }
 
     location ~ \.php$ {
         fastcgi_pass $upstream_endpoint;
         fastcgi_index index.php;
         include fastcgi.conf;
-        fastcgi_read_timeout 60s;
+        fastcgi_read_timeout 300s;
         fastcgi_connect_timeout 5s;
-        fastcgi_param SCRIPT_FILENAME /project/public/$fastcgi_script_name;
+        fastcgi_param SCRIPT_FILENAME ${SOURCE_PATH}/$fastcgi_script_name;
         fastcgi_param SCRIPT_NAME $fastcgi_script_name;
     }
 
