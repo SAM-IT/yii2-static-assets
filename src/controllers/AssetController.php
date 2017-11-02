@@ -66,7 +66,7 @@ class AssetController extends Controller
             '{path}' => $dockerContext,
             '{name}' => $this->module->containerTag ? "-t {$this->module->containerTag}" : ""
         ]);
-        $this->stdout($command, Console::FG_YELLOW);
+        $this->stdout($command . "\n", Console::FG_YELLOW);
         passthru($command);
         $this->stdout("OK\n", Console::FG_GREEN);
 

@@ -17,10 +17,11 @@ class Bootstrap implements BootstrapInterface
     public function bootstrap($app)
     {
         if ($app instanceof \yii\console\Application) {
-            $app->setModule("staticAssets", [
-                'class' => StaticAssets::class
-            ]);
-            $app->getModule('staticAssets');
+            if (!$app->hasModule("staticAssets")) {
+                $app->setModule("staticAssets", [
+                    'class' => StaticAssets::class
+                ]);
+            }
         }
 
         if ($app instanceof \yii\web\Application) {
