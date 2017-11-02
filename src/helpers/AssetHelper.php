@@ -48,16 +48,12 @@ class AssetHelper
             $namespace = StringHelper::dirname($class);
             $class = StringHelper::basename($class);
             try {
-
                 if (stripos($class, 'interface') !== false) {
                     $code = "namespace $namespace { interface $class{} }";
                 } else {
                     $code = "namespace $namespace { class $class{} }";
                 }
-
-                echo "Stubbing $class with the following code: $code\n";
                 eval($code);
-
             } catch (\Throwable $t) {
 
             }
