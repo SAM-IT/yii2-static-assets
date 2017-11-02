@@ -11,9 +11,7 @@ use yii\helpers\StringHelper;
 use yii\web\AssetBundle;
 use yii\web\AssetManager;
 
-interface DummyInterface{}
-
-class AssetHelper extends \stdClass implements DummyInterface
+class AssetHelper
 {
 
     public static function isAssetBundle(string $class): bool
@@ -117,9 +115,7 @@ class AssetHelper extends \stdClass implements DummyInterface
             '/test/i'
         ];
         // Exclude some namespaces.
-        foreach([
-
-        ] as $regex) {
+        foreach($excludeNamespaces as $regex) {
             if (preg_match($regex, $namespace)) {
                 return [];
             }
@@ -136,7 +132,7 @@ class AssetHelper extends \stdClass implements DummyInterface
             }
             foreach($excludeClasses as $regex) {
                 if (preg_match($regex, $namespace)) {
-                    continue;
+                    continue 2;
                 }
             }
             $classes[] = "$namespace\\$class";
