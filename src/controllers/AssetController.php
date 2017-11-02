@@ -62,10 +62,12 @@ class AssetController extends Controller
         $this->stdout("OK\n", Console::FG_GREEN);
 
         $this->stdout("Starting build...\n", Console::FG_CYAN);
-        passthru(strtr('docker build --pull -t {name} {path}', [
+        $command = strtr('docker build --pull -t {name} {path}', [
             '{path}' => $dockerContext,
             '{name}' => $this->module->containerTag ?? "''"
-        ]));
+        ]);
+        $this->stdout($command, Console::FG_YELLOW);
+        passthru($command);
         $this->stdout("OK\n", Console::FG_GREEN);
 
 
