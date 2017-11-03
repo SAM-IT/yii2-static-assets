@@ -17,6 +17,8 @@ class StaticAssets extends Module
 
     public $containerTag;
 
+    public $push = false;
+
     public function init()
     {
         parent::init();

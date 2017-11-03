@@ -12,6 +12,9 @@ fi
 
 if [ -z "$SOURCE_PATH" ]; then
 SOURCE_PATH=/project/public
+echo "Variable \$SOURCE_PATH is required.";
+exit 1;
+
 fi
 
 envsubst "\$PHPFPM \$RESOLVER" < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf
