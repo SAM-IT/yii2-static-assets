@@ -24,8 +24,16 @@ class Bootstrap implements BootstrapInterface
             }
         }
 
+        // Update or set configuration for asset manager.
         if ($app instanceof \yii\web\Application) {
-            $app->assetManager->hashCallback = StaticAssets::hashCallback();
+            if ($app->has('assetManager', true)) {
+                $app->get('assetManager')->hashCallback = StaticAssets::hashCallback();
+            } elseif ($app->has('assetManager')) {
+                $config = $app->getComponents(true)['assetManager'];
+                $config['hashCallback'] = StaticAssets::hashCallback();
+                $app->set('assetManager', $config);
+            }
         }
+
     }
 }

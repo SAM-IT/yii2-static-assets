@@ -31,11 +31,9 @@ class AssetController extends Controller
         $fullPath = getcwd() . "/$path";
         $this->stdout("Creating path: " . $fullPath);
         mkdir($fullPath, 0777, true);
-        $assetManager = new AssetManager([
-            'basePath' => $fullPath,
-            'baseUrl' => $this->module->baseUrl,
-            'hashCallback' => StaticAssets::hashCallback()
-        ]);
+        $assetManager = $this->module->get('assetManager');
+        $assetManager->basePath = $fullPath;
+        $assetManager->baseUrl = $this->module->baseUrl;
 
         AssetHelper::publishAssets($assetManager, \Yii::getAlias('@app'));
         AssetHelper::createGzipFiles($fullPath);
@@ -54,11 +52,9 @@ class AssetController extends Controller
         $this->stdout("Creating asset path: $fullPath... ", Console::FG_CYAN);
         mkdir($fullPath, 0777, true);
         $this->stdout("OK\n", Console::FG_GREEN);
-        $assetManager = new AssetManager([
-            'basePath' => $fullPath,
-            'baseUrl' => $this->module->baseUrl,
-            'hashCallback' => StaticAssets::hashCallback()
-        ]);
+        $assetManager = $this->module->get('assetManager');
+        $assetManager->basePath = $fullPath;
+        $assetManager->baseUrl = $this->module->baseUrl;
 
         $this->stdout("Publishing assets... ", Console::FG_CYAN);
         AssetHelper::publishAssets($assetManager, \Yii::getAlias('@app'));
@@ -82,7 +78,7 @@ class AssetController extends Controller
         if ($retval === 0) {
             $this->stdout("OK\n", Console::FG_GREEN);
             $this->stdout("Removing build folder...", Console::FG_CYAN);
-            FileHelper::removeDirectory($buildDir);
+//            FileHelper::removeDirectory($buildDir);
             $this->stdout("OK\n", Console::FG_GREEN);
         } else {
             $this->stderr("FAIL\nDocker build failed, leaving build folder intact for inspection\n", Console::FG_RED);

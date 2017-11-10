@@ -22,6 +22,10 @@ class StaticAssets extends Module
     public function init()
     {
         parent::init();
+        $assetManagerConfig = $this->module->getComponents(true)['assetManager'] ?? [];
+        $assetManagerConfig['hashCallback'] = self::hashCallback();
+        $this->set('assetManager', $assetManagerConfig);
+
     }
 
     public static function hashCallback(): \Closure
