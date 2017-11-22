@@ -25,6 +25,26 @@ class AssetController extends Controller
      */
     public $push;
 
+    /**
+     * @var string The name of the created image
+     * If not explicitly set will take its default from module config.
+     */
+    public $image;
+
+    /**
+     * @var string The tag of the created image
+     * If not explicitly set will take its default from module config.
+     */
+    public $tag;
+
+    public function init()
+    {
+        parent::init();
+        $this->push = $this->module->push;
+        $this->image = $this->module->image;
+        $this->tag = $this->module->tag;
+    }
+
 
     public function actionIndex($path)
     {
@@ -71,34 +91,36 @@ class AssetController extends Controller
         $this->stdout("Starting build...\n", Console::FG_CYAN);
         $command = strtr('docker build --pull {name} {path}', [
             '{path}' => $buildDir,
-            '{name}' => $this->module->containerTag ? "-t {$this->module->containerTag}" : ""
+            '{name}' => $this->image ? "-t {$this->image}:{$this->tag}" : ""
         ]);
         $this->stdout($command . "\n", Console::FG_YELLOW);
         passthru($command, $retval);
-        if ($retval === 0) {
-            $this->stdout("OK\n", Console::FG_GREEN);
-            $this->stdout("Removing build folder...", Console::FG_CYAN);
-//            FileHelper::removeDirectory($buildDir);
-            $this->stdout("OK\n", Console::FG_GREEN);
-        } else {
+        if ($retval !== 0) {
             $this->stderr("FAIL\nDocker build failed, leaving build folder intact for inspection\n", Console::FG_RED);
+            return;
         }
 
-        if (($this->push ?? $this->module->push)
-            && $this->module->containerTag)
-        {
-            $this->stdout("Pushing image", Console::FG_CYAN);
-            $command = strtr('docker push {name}', [
-                '{name}' => $this->module->containerTag
-            ]);
-            $this->stdout($command . "\n", Console::FG_YELLOW);
-            passthru($command, $retval);
-            if ($retval === 0) {
-                $this->stdout("OK\n", Console::FG_GREEN);
-            } else {
-                $this->stderr("FAIL\nDocker push failed\n", Console::FG_RED);
-            }
+        $this->stdout("OK\n", Console::FG_GREEN);
+        $this->stdout("Removing build folder...", Console::FG_CYAN);
+        $this->stdout("OK\n", Console::FG_GREEN);
+
+        if (!($this->push && $this->image)) {
+            return;
         }
+
+        $this->stdout("Pushing image", Console::FG_CYAN);
+        $command = strtr('docker push {name}', [
+            '{name}' => $this->image . ':' . $this->tag
+        ]);
+        $this->stdout($command . "\n", Console::FG_YELLOW);
+        passthru($command, $retval);
+
+        if ($retval !== 0) {
+            $this->stderr("FAIL\nDocker push failed\n", Console::FG_RED);
+            return;
+        }
+
+        $this->stdout("OK\n", Console::FG_GREEN);
     }
 
     public function options($actionID)
@@ -107,7 +129,9 @@ class AssetController extends Controller
         $result = parent::options($actionID);
         switch ($actionID) {
             case 'build-container':
-                array_unshift($result, 'push');
+                $result[] = 'push';
+                $result[] = 'image';
+                $result[] = 'tag';
                 break;
 
         }
@@ -118,6 +142,8 @@ class AssetController extends Controller
     {
         $result = parent::optionAliases();
         $result['p'] = 'push';
+        $result['t'] = 'tag';
+        $result['i'] = 'image';
         return $result;
     }
 

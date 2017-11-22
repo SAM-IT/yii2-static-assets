@@ -15,7 +15,8 @@ class StaticAssets extends Module
      */
     public $baseUrl;
 
-    public $containerTag;
+    public $image;
+    public $tag = 'latest';
 
     public $push = false;
 
