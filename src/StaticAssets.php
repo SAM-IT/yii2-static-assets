@@ -20,6 +20,11 @@ class StaticAssets extends Module
 
     public $push = false;
 
+    /**
+     * @var string The class of the default asset bundle. This will be used to look for files like /favicon.ico
+     */
+    public $defaultBundle;
+
     public function init()
     {
         parent::init();

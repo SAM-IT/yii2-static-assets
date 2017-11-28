@@ -1,4 +1,5 @@
 #!/bin/sh
+cat /etc/nginx/conf.d/default.conf.template
 echo "Creating new config..."
 if [ -z "$RESOLVER" ]; then
 echo "Variable \$RESOLVER is required.";

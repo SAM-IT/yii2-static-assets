@@ -37,12 +37,19 @@ class AssetController extends Controller
      */
     public $tag;
 
+    /**
+     * @var string The default asset bundle
+     * If not explicitly set will take its default from module config.
+     */
+    public $defaultBundle;
+
     public function init()
     {
         parent::init();
         $this->push = $this->module->push;
         $this->image = $this->module->image;
         $this->tag = $this->module->tag;
+        $this->defaultBundle = $this->module->defaultBundle;
     }
 
 
@@ -72,6 +79,7 @@ class AssetController extends Controller
         $this->stdout("Creating asset path: $fullPath... ", Console::FG_CYAN);
         mkdir($fullPath, 0777, true);
         $this->stdout("OK\n", Console::FG_GREEN);
+        /** @var AssetManager $assetManager */
         $assetManager = $this->module->get('assetManager');
         $assetManager->basePath = $fullPath;
         $assetManager->baseUrl = $this->module->baseUrl;
@@ -86,6 +94,15 @@ class AssetController extends Controller
 
         $this->stdout("Copying build context... ", Console::FG_CYAN);
         FileHelper::copyDirectory(\Yii::getAlias('@SamIT/Yii2/StaticAssets/docker'), $buildDir);
+        // Add configuration for asset fallback.
+        if (isset($this->defaultBundle)) {
+            $fallbackDir = strtr($assetManager->getBundle($this->defaultBundle)->basePath, [$buildDir => '']);
+            $templateFile = "$buildDir/default.conf.template";
+            $template = strtr(file_get_contents($templateFile),
+                ['try_files $uri' => "try_files \$uri $fallbackDir/\$uri"]);
+            file_put_contents($templateFile, $template);
+        }
+
         $this->stdout("OK\n", Console::FG_GREEN);
 
         $this->stdout("Starting build...\n", Console::FG_CYAN);

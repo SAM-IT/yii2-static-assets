@@ -225,4 +225,5 @@ class AssetHelper
             $assetManager->getBundle($bundle, true);
         }
     }
+
 }
