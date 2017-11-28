@@ -9,7 +9,7 @@ use Yii;
 /**
  * Class ReadOnlyAssetManager
  * Asset manager that does not actualy (re)publish files. Use it in production when the assets are part of the nginx
- * container.
+ * container
  * @package SamIT\Yii2\StaticAssets
  */
 class ReadOnlyAssetManager extends \yii\web\AssetManager
@@ -34,6 +34,11 @@ class ReadOnlyAssetManager extends \yii\web\AssetManager
         $dir = $this->hash($src);
         $dstDir = $this->basePath . DIRECTORY_SEPARATOR . $dir;
         return [$dstDir, $this->baseUrl . '/' . $dir];
+    }
+
+    protected function hash($path)
+    {
+        return call_user_func(StaticAssets::hashCallback(), $path);
     }
 
 
