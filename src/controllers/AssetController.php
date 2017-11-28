@@ -43,6 +43,14 @@ class AssetController extends Controller
      */
     public $defaultBundle;
 
+    public $baseUrl;
+
+    /**
+     * @var string The location of your entry script inside the PHPFPM container.
+     * Must be absolute, does not support aliases.
+     */
+    public $entryScript;
+
     public function init()
     {
         parent::init();
@@ -50,6 +58,8 @@ class AssetController extends Controller
         $this->image = $this->module->image;
         $this->tag = $this->module->tag;
         $this->defaultBundle = $this->module->defaultBundle;
+        $this->baseUrl = $this->module->baseUrl;
+        $this->entryScript = $this->module->entryScript;
     }
 
 
@@ -79,10 +89,14 @@ class AssetController extends Controller
         $this->stdout("Creating asset path: $fullPath... ", Console::FG_CYAN);
         mkdir($fullPath, 0777, true);
         $this->stdout("OK\n", Console::FG_GREEN);
+        // Override some configuration.
+        $assetManagerConfig = $this->module->getComponents()['assetManager'];
+        $assetManagerConfig['basePath'] = $fullPath;
+        $assetManagerConfig['baseUrl'] = $this->baseUrl;
+        $this->module->set('assetManager', $assetManagerConfig);
+
         /** @var AssetManager $assetManager */
         $assetManager = $this->module->get('assetManager');
-        $assetManager->basePath = $fullPath;
-        $assetManager->baseUrl = $this->module->baseUrl;
 
         $this->stdout("Publishing assets... ", Console::FG_CYAN);
         AssetHelper::publishAssets($assetManager, \Yii::getAlias('@app'));
@@ -99,7 +113,11 @@ class AssetController extends Controller
             $fallbackDir = strtr($assetManager->getBundle($this->defaultBundle)->basePath, [$buildDir => '']);
             $templateFile = "$buildDir/default.conf.template";
             $template = strtr(file_get_contents($templateFile),
-                ['try_files $uri' => "try_files \$uri $fallbackDir/\$uri"]);
+                [
+                    'try_files $uri' => "try_files \$uri $fallbackDir/\$uri",
+                    '{{source_path}}' => dirname($this->entryScript),
+                    '{{entry_script}}' => basename($this->entryScript)
+                ]);
             file_put_contents($templateFile, $template);
         }
 

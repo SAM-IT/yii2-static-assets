@@ -4,9 +4,8 @@
 namespace SamIT\Yii2\StaticAssets;
 
 
-use yii\base\Application;
-use yii\base\BootstrapInterface;
 use yii\base\Module;
+use yii\console\Application;
 
 class StaticAssets extends Module
 {
@@ -25,11 +24,23 @@ class StaticAssets extends Module
      */
     public $defaultBundle;
 
+    /**
+     * @var string The location if your entry script inside your PHP-FPM container / server
+     * Does not support aliases, must be absolute.
+     */
+    public $entryScript;
+
     public function init()
     {
         parent::init();
         $assetManagerConfig = $this->module->getComponents(true)['assetManager'] ?? [];
         $assetManagerConfig['hashCallback'] = self::hashCallback();
+        if ($this->module instanceof Application) {
+            if (!isset(\Yii::$aliases['@webroot'])) {
+                \Yii::setAlias('@webroot', sys_get_temp_dir());
+            }
+            $assetManagerConfig['basePath'] = sys_get_temp_dir();
+        }
         $this->set('assetManager', $assetManagerConfig);
 
     }
