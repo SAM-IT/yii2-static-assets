@@ -82,6 +82,7 @@ class AssetController extends Controller
         $assetManagerConfig['basePath'] = $fullPath;
         $assetManagerConfig['baseUrl'] = $this->baseUrl;
         $this->module->set('assetManager', $assetManagerConfig);
+        return $this->module->get('assetManager');
     }
 
     /**
