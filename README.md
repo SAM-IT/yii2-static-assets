@@ -37,7 +37,6 @@ This will create the directory `build12345` inside your runtime directory and pu
 # Asset discovery / publishing
 Assets are discovered by recursively iterating over all folders and files.
 Each file that ends with `.php` is then processed:
-- If it does not contain the word `AssetBundle` it is skipped.
 - The namespace is extracted via regular expression matching.
 - The class name is extracted via regular expression matching.
 - We use reflection to check if the class is an instance of `yii\web\AssetBundle` and if so it is published.
@@ -48,4 +47,55 @@ To build an nignx container for server your application use this:
 yii staticAssets/assets/build-container
 ````
 You can configure the module to set some default values.
+
+# Configuration
+For simple configuration use the `ReadOnlyAssetManager` in your application during production and development.
+This asset manager will use a simpler "hash" function that keeps directory structure readable.
+It supports `$assetDevelopmentMode` which allows for local asset development in a dockerized environment.
+
+# Asset development
+The assumption is that you use docker-compose for local development, in which case you need to define a volume where assets are stored so that they are available in both the webserver as well as the phpfpm container:
+````
+volumes:
+  assets:
+nginx:
+    image: [name of your nginx container, built by this module]
+    environment:
+      PHPFPM: "phpfpm:9000"
+      RESOLVER: "127.0.0.11"
+    ports:
+      - "12346:80" # Port where the application will be available
+    depends_on:
+      - phpfpm
+    volumes:
+    # Defines the named volume as read-only for the webserver.
+    # Note the dev-assets, which allows to easily identify development
+    # mode while using browsers' developer tools.
+      - type: volume
+        source: assets
+        target: /www/dev-assets
+        read_only: true
+        volume:
+          nocopy: true
+  phpfpm:
+    dns: 8.8.4.4
+    image: [ name of your PHPFPM docker image ]
+    environment:
+      DB_USER: root
+      DB_NAME: test
+      DB_PASS: secret
+      DB_HOST: mysql
+    depends_on:
+      - mysql
+    volumes:
+      # The source code is loaded into PHPFPM for local development,
+      # for production it should be baked into the image.
+      - .:/project:ro
+      # The asset volume, note the location which is where the ReadOnlyAssetManager
+      # will publish assets when in development mode.
+      - type: volume
+        source: assets
+        target: /tmp/assets
+````
+
 

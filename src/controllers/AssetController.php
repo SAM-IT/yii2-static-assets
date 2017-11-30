@@ -66,15 +66,22 @@ class AssetController extends Controller
     public function actionIndex($path)
     {
         $fullPath = getcwd() . "/$path";
-        $this->stdout("Creating path: " . $fullPath);
-        mkdir($fullPath, 0777, true);
-        $assetManager = $this->module->get('assetManager');
-        $assetManager->basePath = $fullPath;
-        $assetManager->baseUrl = $this->module->baseUrl;
-
+        $assetManager = $this->getAssetManager($fullPath);
         AssetHelper::publishAssets($assetManager, \Yii::getAlias('@app'));
         AssetHelper::createGzipFiles($fullPath);
 
+    }
+
+    protected function getAssetManager($fullPath): AssetManager
+    {
+        $this->stdout("Creating asset path: $fullPath... ", Console::FG_CYAN);
+        mkdir($fullPath, 0777, true);
+        $this->stdout("OK\n", Console::FG_GREEN);
+        // Override some configuration.
+        $assetManagerConfig = $this->module->getComponents()['assetManager'];
+        $assetManagerConfig['basePath'] = $fullPath;
+        $assetManagerConfig['baseUrl'] = $this->baseUrl;
+        $this->module->set('assetManager', $assetManagerConfig);
     }
 
     /**
@@ -86,18 +93,7 @@ class AssetController extends Controller
         $buildDir = \Yii::getAlias('@runtime') . '/build' . time();
 
         $fullPath = $buildDir . "/assets";
-        $this->stdout("Creating asset path: $fullPath... ", Console::FG_CYAN);
-        mkdir($fullPath, 0777, true);
-        $this->stdout("OK\n", Console::FG_GREEN);
-        // Override some configuration.
-        $assetManagerConfig = $this->module->getComponents()['assetManager'];
-        $assetManagerConfig['basePath'] = $fullPath;
-        $assetManagerConfig['baseUrl'] = $this->baseUrl;
-        $this->module->set('assetManager', $assetManagerConfig);
-
-        /** @var AssetManager $assetManager */
-        $assetManager = $this->module->get('assetManager');
-
+        $assetManager = $this->getAssetManager($fullPath);
         $this->stdout("Publishing assets... ", Console::FG_CYAN);
         AssetHelper::publishAssets($assetManager, \Yii::getAlias('@app'));
         $this->stdout("OK\n", Console::FG_GREEN);
