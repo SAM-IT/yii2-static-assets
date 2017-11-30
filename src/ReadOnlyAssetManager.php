@@ -14,14 +14,31 @@ use Yii;
  */
 class ReadOnlyAssetManager extends \yii\web\AssetManager
 {
+    /**
+     * @var bool Whether to enable asset development mode.
+     */
+    public $assetDevelopmentMode = false;
+
     public function init()
     {
+        if ($this->assetDevelopmentMode)
+        {
+            $this->baseUrl = '/dev-assets';
+            $this->basePath = '/tmp/assets';
+            $this->forceCopy = true;
+            return;
+        }
         $this->basePath = Yii::getAlias($this->basePath);
         $this->baseUrl = rtrim(Yii::getAlias($this->baseUrl), '/');
+
     }
 
     protected function publishFile($src)
     {
+        if ($this->assetDevelopmentMode) {
+            return parent::publishFile($src);
+        }
+
         $dir = $this->hash($src);
         $fileName = basename($src);
         $dstDir = $this->basePath . DIRECTORY_SEPARATOR . $dir;
@@ -31,6 +48,10 @@ class ReadOnlyAssetManager extends \yii\web\AssetManager
 
     protected function publishDirectory($src, $options)
     {
+        if ($this->assetDevelopmentMode) {
+            return parent::publishDirectory($src, $options);
+        }
+
         $dir = $this->hash($src);
         $dstDir = $this->basePath . DIRECTORY_SEPARATOR . $dir;
         return [$dstDir, $this->baseUrl . '/' . $dir];
