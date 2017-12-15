@@ -45,17 +45,33 @@ class AssetHelper
     {
         // We register an autoloader to handle missing classes.
         $autoLoader = function($class) {
+            echo "Autoloading: $class\n";
+            $trace = debug_backtrace(0, 2);
+
+            $type = "class";
+
+            if (isset($trace[1])
+                && $trace[1]['function'] === 'spl_autoload_call'
+                && isset($trace[1]['file'])
+            ) {
+                $file = file_get_contents($trace[1]['file']);
+                $pattern = "/class .* implements.*" . strtr($class, ['\\' => '\\\\']) .".*?\{/msi";
+                if (preg_match($pattern, $file, $matches)) {
+                    //Interface!!
+                    $type = "interface";
+                }
+            }
+
             $namespace = StringHelper::dirname($class);
             $class = StringHelper::basename($class);
+            if (stripos($class, 'interface') !== false) {
+                $type = 'interface';
+            }
+            $code = "namespace $namespace { $type $class{} }";
             try {
-                if (stripos($class, 'interface') !== false) {
-                    $code = "namespace $namespace { interface $class{} }";
-                } else {
-                    $code = "namespace $namespace { class $class{} }";
-                }
                 eval($code);
             } catch (\Throwable $t) {
-
+                die($t->getMessage());
             }
         };
         spl_autoload_register($autoLoader);
@@ -68,17 +84,21 @@ class AssetHelper
 
             $classes = [];
             /** @var \SplFileInfo $file */
-            foreach($iter as $file) {
+            foreach ($iter as $file) {
                 if ($file->getExtension() !== 'php') {
                     continue;
                 }
-                foreach(self::getClassNames($file->getPathname()) as $className) {
+                foreach (self::getClassNames($file->getPathname()) as $className) {
                     if (self::isAssetBundle($className)) {
                         $classes[] = $className;
                     }
                 };
             }
             return $classes;
+        } catch(\Throwable $t) {
+            echo "Throwable:";
+            var_dump($t);
+            die();
         } finally {
             spl_autoload_unregister($autoLoader);
         }

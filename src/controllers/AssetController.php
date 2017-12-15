@@ -95,8 +95,12 @@ class AssetController extends Controller
 
         $fullPath = $buildDir . "/assets";
         $assetManager = $this->getAssetManager($fullPath);
-        $this->stdout("Publishing assets... ", Console::FG_CYAN);
+        $this->stdout("Publishing application assets... ", Console::FG_CYAN);
         AssetHelper::publishAssets($assetManager, \Yii::getAlias('@app'));
+        $this->stdout("OK\n", Console::FG_GREEN);
+
+        $this->stdout("Publishing vendor assets... ", Console::FG_CYAN);
+        AssetHelper::publishAssets($assetManager, \Yii::getAlias('@vendor'));
         $this->stdout("OK\n", Console::FG_GREEN);
 
         $this->stdout("Compressing assets... ", Console::FG_CYAN);

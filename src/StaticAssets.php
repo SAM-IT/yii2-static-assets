@@ -48,8 +48,12 @@ class StaticAssets extends Module
     public static function hashCallback(): \Closure
     {
         return function($path) {
+
             $dir = is_file($path) ? dirname($path) : $path;
-            $relativePath = strtr($dir, [\Yii::getAlias('@app') => '']);
+            $relativePath = strtr($dir, [
+                realpath(\Yii::getAlias('@app')) => 'app',
+                realpath(\Yii::getAlias('@vendor')) => 'vendor'
+            ]);
             return strtr(trim($relativePath, '/'), ['/' => '_']);
         };
     }
