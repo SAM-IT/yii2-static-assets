@@ -1,4 +1,2 @@
 actor: UnitTester
 modules:
-    enabled:
-        - \Helper\Unit
