@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace SamIT\Yii2\StaticAssets;
 
@@ -14,7 +14,7 @@ class Bootstrap implements BootstrapInterface
      * Bootstrap method to be called during application bootstrap stage.
      * @param Application $app the application currently running
      */
-    public function bootstrap($app)
+    public function bootstrap($app): void
     {
         if ($app instanceof \yii\console\Application) {
             if (!$app->hasModule("staticAssets")) {

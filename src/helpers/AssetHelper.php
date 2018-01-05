@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace SamIT\Yii2\StaticAssets\helpers;
 
@@ -16,7 +16,7 @@ class AssetHelper
 
     public static function isAssetBundle(string $class): bool
     {
-        if (!class_exists($class)) {
+        if (!\class_exists($class)) {
             return false;
         }
 
@@ -44,9 +44,9 @@ class AssetHelper
     public static function findAssetBundles(string $baseDir, array $excludedPatterns = []): array
     {
         // We register an autoloader to handle missing classes.
-        $autoLoader = function($class) {
+        $autoLoader = function($class): void {
             echo "Autoloading: $class\n";
-            $trace = debug_backtrace(0, 2);
+            $trace = \debug_backtrace(0, 2);
 
             $type = "class";
 
@@ -55,16 +55,16 @@ class AssetHelper
                 && isset($trace[1]['file'])
             ) {
                 echo "Parsing file: {$trace[1]['file']}";
-                $file = file_get_contents($trace[1]['file']);
-                $pattern = "/class .* implements.*" . strtr($class, ['\\' => '\\\\']) .".*?\{/msi";
-                if (preg_match($pattern, $file, $matches)) {
+                $file = \file_get_contents($trace[1]['file']);
+                $pattern = "/class .* implements.*" . \strtr($class, ['\\' => '\\\\']) .".*?\{/msi";
+                if (\preg_match($pattern, $file, $matches)) {
                     //Interface!!
                     $type = "interface";
                 } else {
                     // If not implemted via FQDN, check simple use clause.
-                    $usePattern = '/use\s*' . strtr($class, ['\\' => '\\\\']) . ';/msi';
+                    $usePattern = '/use\s*' . \strtr($class, ['\\' => '\\\\']) . ';/msi';
                     $implementsPattern = "/class .* implements.*" . StringHelper::basename($class) . ".*?\{/msi";
-                    if (preg_match($usePattern, $file) && preg_match($implementsPattern, $file)) {
+                    if (\preg_match($usePattern, $file) && \preg_match($implementsPattern, $file)) {
                         $type = "interface";
                     }
                 }
@@ -72,7 +72,7 @@ class AssetHelper
 
             $namespace = StringHelper::dirname($class);
             $class = StringHelper::basename($class);
-            if (stripos($class, 'interface') !== false) {
+            if (\stripos($class, 'interface') !== false) {
                 $type = 'interface';
             }
             $code = "namespace $namespace { $type $class{} }";
@@ -83,7 +83,7 @@ class AssetHelper
                 die($t->getMessage());
             }
         };
-        spl_autoload_register($autoLoader);
+        \spl_autoload_register($autoLoader);
         try {
             $iter = new RecursiveIteratorIterator(
                 new RecursiveDirectoryIterator($baseDir, RecursiveDirectoryIterator::SKIP_DOTS),
@@ -98,7 +98,7 @@ class AssetHelper
                     continue;
                 }
                 foreach ($excludedPatterns as $pattern) {
-                    if (fnmatch($pattern, $file->getPathname())) {
+                    if (\fnmatch($pattern, $file->getPathname())) {
                         continue 2;
                     }
                 }
@@ -111,10 +111,10 @@ class AssetHelper
             return $classes;
         } catch(\Throwable $t) {
             echo "Throwable:";
-            var_dump($t);
+            \var_dump($t);
             die();
         } finally {
-            spl_autoload_unregister($autoLoader);
+            \spl_autoload_unregister($autoLoader);
         }
 
     }
@@ -128,9 +128,9 @@ class AssetHelper
      */
     public static function getClassNames(string $file): array
     {
-        $contents = file_get_contents($file);
+        $contents = \file_get_contents($file);
 //        echo "$file - tokenizing...";
-        $tokens = token_get_all($contents);
+        $tokens = \token_get_all($contents);
 //        echo "OK\n";
         $namespace = self::parseNameSpace($tokens);
 
@@ -146,7 +146,7 @@ class AssetHelper
         ];
         // Exclude some namespaces.
         foreach($excludeNamespaces as $regex) {
-            if (preg_match($regex, $namespace)) {
+            if (\preg_match($regex, $namespace)) {
                 return [];
             }
 
@@ -161,7 +161,7 @@ class AssetHelper
                 break;
             }
             foreach($excludeClasses as $regex) {
-                if (preg_match($regex, $namespace)) {
+                if (\preg_match($regex, $namespace)) {
                     continue 2;
                 }
             }
@@ -182,7 +182,7 @@ class AssetHelper
     public static function parseNameSpace(array &$tokens): string
     {
         self::popUntil($tokens, [T_NAMESPACE]);
-        return implode("", self::popUntil($tokens, [';', '{']));
+        return \implode("", self::popUntil($tokens, [';', '{']));
 
     }
 
@@ -191,7 +191,7 @@ class AssetHelper
         self::popUntil($tokens, [T_CLASS]);
         $popped = self::popUntil($tokens, ['{', T_EXTENDS, T_IMPLEMENTS]);
 
-        return !empty($popped) ? implode("", $popped) : null;
+        return !empty($popped) ? \implode("", $popped) : null;
 
     }
 
@@ -201,23 +201,23 @@ class AssetHelper
 
         while (!empty($tokens)) {
             // Peek
-            $token = array_shift($tokens);
-            if (is_array($token) && $token[0] === T_WHITESPACE) {
+            $token = \array_shift($tokens);
+            if (\is_array($token) && $token[0] === T_WHITESPACE) {
                 continue;
 
             }
-            $popped[] = is_array($token) ? $token[1] : $token;
+            $popped[] = \is_array($token) ? $token[1] : $token;
 
 
             foreach($markers as $marker) {
 
                 if ($token === $marker) {
-                    array_pop($popped);
+                    \array_pop($popped);
                     return $popped;
                 }
 
-                if (is_array($token) && $token[0] === $marker) {
-                    array_pop($popped);
+                if (\is_array($token) && $token[0] === $marker) {
+                    \array_pop($popped);
                     return $popped;
                 }
 
@@ -233,7 +233,7 @@ class AssetHelper
      * Recursively creates gzip files for all files in the directory.
      * @param string $baseDir
      */
-    public static function createGzipFiles(string $baseDir)
+    public static function createGzipFiles(string $baseDir): void
     {
         // We do not care about memory usage and assume all files fit in memory.
         $iter = new RecursiveIteratorIterator(
@@ -245,15 +245,15 @@ class AssetHelper
         foreach($iter as $file)
         {
             if ($file->getExtension() !== 'gz') {
-                $handle = gzopen($file->getPathname() . '.gz', 'w9');
-                gzwrite($handle, file_get_contents($file->getPathname()));
-                gzclose($handle);
+                $handle = \gzopen($file->getPathname() . '.gz', 'w9');
+                \gzwrite($handle, \file_get_contents($file->getPathname()));
+                \gzclose($handle);
 
             }
         }
     }
 
-    public static function publishAssets(AssetManager $assetManager, $baseDir, $excludedPatterns = [])
+    public static function publishAssets(AssetManager $assetManager, $baseDir, $excludedPatterns = []): void
     {
         foreach(self::findAssetBundles($baseDir, $excludedPatterns) as $bundle) {
             $assetManager->getBundle($bundle, true);
