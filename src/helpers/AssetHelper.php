@@ -41,21 +41,46 @@ class AssetHelper
      * @param string $baseDir
      * @return array
      */
-    public static function findAssetBundles(string $baseDir): array
+    public static function findAssetBundles(string $baseDir, array $excludedPatterns = []): array
     {
         // We register an autoloader to handle missing classes.
         $autoLoader = function($class) {
+            echo "Autoloading: $class\n";
+            $trace = debug_backtrace(0, 2);
+
+            $type = "class";
+
+            if (isset($trace[1])
+                && $trace[1]['function'] === 'spl_autoload_call'
+                && isset($trace[1]['file'])
+            ) {
+                echo "Parsing file: {$trace[1]['file']}";
+                $file = file_get_contents($trace[1]['file']);
+                $pattern = "/class .* implements.*" . strtr($class, ['\\' => '\\\\']) .".*?\{/msi";
+                if (preg_match($pattern, $file, $matches)) {
+                    //Interface!!
+                    $type = "interface";
+                } else {
+                    // If not implemted via FQDN, check simple use clause.
+                    $usePattern = '/use\s*' . strtr($class, ['\\' => '\\\\']) . ';/msi';
+                    $implementsPattern = "/class .* implements.*" . StringHelper::basename($class) . ".*?\{/msi";
+                    if (preg_match($usePattern, $file) && preg_match($implementsPattern, $file)) {
+                        $type = "interface";
+                    }
+                }
+            }
+
             $namespace = StringHelper::dirname($class);
             $class = StringHelper::basename($class);
+            if (stripos($class, 'interface') !== false) {
+                $type = 'interface';
+            }
+            $code = "namespace $namespace { $type $class{} }";
+            echo "Classified as: $type\n";
             try {
-                if (stripos($class, 'interface') !== false) {
-                    $code = "namespace $namespace { interface $class{} }";
-                } else {
-                    $code = "namespace $namespace { class $class{} }";
-                }
                 eval($code);
             } catch (\Throwable $t) {
-
+                die($t->getMessage());
             }
         };
         spl_autoload_register($autoLoader);
@@ -68,17 +93,26 @@ class AssetHelper
 
             $classes = [];
             /** @var \SplFileInfo $file */
-            foreach($iter as $file) {
+            foreach ($iter as $file) {
                 if ($file->getExtension() !== 'php') {
                     continue;
                 }
-                foreach(self::getClassNames($file->getPathname()) as $className) {
+                foreach ($excludedPatterns as $pattern) {
+                    if (fnmatch($pattern, $file->getPathname())) {
+                        continue 2;
+                    }
+                }
+                foreach (self::getClassNames($file->getPathname()) as $className) {
                     if (self::isAssetBundle($className)) {
                         $classes[] = $className;
                     }
                 };
             }
             return $classes;
+        } catch(\Throwable $t) {
+            echo "Throwable:";
+            var_dump($t);
+            die();
         } finally {
             spl_autoload_unregister($autoLoader);
         }
@@ -219,9 +253,9 @@ class AssetHelper
         }
     }
 
-    public static function publishAssets(AssetManager $assetManager, $baseDir)
+    public static function publishAssets(AssetManager $assetManager, $baseDir, $excludedPatterns = [])
     {
-        foreach(self::findAssetBundles($baseDir) as $bundle) {
+        foreach(self::findAssetBundles($baseDir, $excludedPatterns) as $bundle) {
             $assetManager->getBundle($bundle, true);
         }
     }

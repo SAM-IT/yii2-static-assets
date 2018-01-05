@@ -51,6 +51,11 @@ class AssetController extends Controller
      */
     public $entryScript;
 
+
+    /** @var array List of fnmatch patterns with file names to skip. */
+    public $excludedPatterns = [];
+
+
     public function init()
     {
         parent::init();
@@ -60,6 +65,7 @@ class AssetController extends Controller
         $this->defaultBundle = $this->module->defaultBundle;
         $this->baseUrl = $this->module->baseUrl;
         $this->entryScript = $this->module->entryScript;
+        $this->excludedPatterns = $this->module->excludedPatterns;
     }
 
 
@@ -95,8 +101,12 @@ class AssetController extends Controller
 
         $fullPath = $buildDir . "/assets";
         $assetManager = $this->getAssetManager($fullPath);
-        $this->stdout("Publishing assets... ", Console::FG_CYAN);
-        AssetHelper::publishAssets($assetManager, \Yii::getAlias('@app'));
+        $this->stdout("Publishing application assets... ", Console::FG_CYAN);
+        AssetHelper::publishAssets($assetManager, \Yii::getAlias('@app'), $this->excludedPatterns);
+        $this->stdout("OK\n", Console::FG_GREEN);
+
+        $this->stdout("Publishing vendor assets... ", Console::FG_CYAN);
+        AssetHelper::publishAssets($assetManager, \Yii::getAlias('@vendor'), $this->excludedPatterns);
         $this->stdout("OK\n", Console::FG_GREEN);
 
         $this->stdout("Compressing assets... ", Console::FG_CYAN);

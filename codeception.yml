@@ -1,0 +1,29 @@
+paths:
+  tests: tests
+  log: tests/_output
+  data: tests/_data
+  support: tests/_support
+  envs: tests/_envs
+actor_suffix: Tester
+extensions:
+  enabled:
+    - Codeception\Extension\RunFailed
+settings:
+  bootstrap: _bootstrap.php
+  colors: true
+  memory_limit: 1024M
+params:
+  - env
+modules:
+  enabled:
+    - Yii2
+  config:
+    Yii2:
+      configFile: 'tests/yii2.config.php'
+#      transaction: true
+#      cleanup: false
+coverage:
+  enabled: true
+  include:
+    - src/*.php
+#  c3_url: 'http://%WEB_IP%'
