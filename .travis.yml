@@ -2,13 +2,22 @@ language: php
 php:
   - '7.1'
   - '7.2'
+env:
+  global:
+    - TEST_COMMAND="composer test"
+matrix:
+  fast_finish: true
+  include:
+    - php: '7.1'
+      env: COVERAGE=true TEST_COMMAND="composer test-with-cc"
+    - php: '7.1'
+      env: COVERAGE=true TEST_COMMAND="composer lint"
+
 install:
   - travis_retry composer install
+
 script:
-  - composer test
-sudo: required
-services:
-  - docker
+  - $TEST_COMMAND
 after_success:
-  - wget https://scrutinizer-ci.com/ocular.phar
-  - php ocular.phar code-coverage:upload --format=php-clover tests/_output/coverage.xml
+  - if [[ "$COVERAGE" = true ]]; then wget https://scrutinizer-ci.com/ocular.phar; fi
+  - if [[ "$COVERAGE" = true ]]; then php ocular.phar code-coverage:upload --format=php-clover tests/_output/coverage.xml; fi
