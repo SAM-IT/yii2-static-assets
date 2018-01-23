@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace SamIT\Yii2\StaticAssets\controllers;
 
@@ -51,7 +51,12 @@ class AssetController extends Controller
      */
     public $entryScript;
 
-    public function init()
+
+    /** @var array List of fnmatch patterns with file names to skip. */
+    public $excludedPatterns = [];
+
+
+    public function init(): void
     {
         parent::init();
         $this->push = $this->module->push;
@@ -60,12 +65,13 @@ class AssetController extends Controller
         $this->defaultBundle = $this->module->defaultBundle;
         $this->baseUrl = $this->module->baseUrl;
         $this->entryScript = $this->module->entryScript;
+        $this->excludedPatterns = $this->module->excludedPatterns;
     }
 
 
-    public function actionIndex($path)
+    public function actionIndex($path): void
     {
-        $fullPath = getcwd() . "/$path";
+        $fullPath = \getcwd() . "/$path";
         $assetManager = $this->getAssetManager($fullPath);
         AssetHelper::publishAssets($assetManager, \Yii::getAlias('@app'));
         AssetHelper::createGzipFiles($fullPath);
@@ -75,7 +81,7 @@ class AssetController extends Controller
     protected function getAssetManager($fullPath): AssetManager
     {
         $this->stdout("Creating asset path: $fullPath... ", Console::FG_CYAN);
-        mkdir($fullPath, 0777, true);
+        \mkdir($fullPath, 0777, true);
         $this->stdout("OK\n", Console::FG_GREEN);
         // Override some configuration.
         $assetManagerConfig = $this->module->getComponents()['assetManager'];
@@ -89,14 +95,14 @@ class AssetController extends Controller
      * Builds a docker container that contains the assets and optionally pushes it.
      * @throws \yii\base\ErrorException
      */
-    public function actionBuildContainer()
+    public function actionBuildContainer(): void
     {
-        $buildDir = \Yii::getAlias('@runtime') . '/build' . time();
+        $buildDir = \Yii::getAlias('@runtime') . '/build' . \time();
 
         $fullPath = $buildDir . "/assets";
         $assetManager = $this->getAssetManager($fullPath);
         $this->stdout("Publishing application assets... ", Console::FG_CYAN);
-        AssetHelper::publishAssets($assetManager, \Yii::getAlias('@app'));
+        AssetHelper::publishAssets($assetManager, \Yii::getAlias('@app'), $this->excludedPatterns);
         $this->stdout("OK\n", Console::FG_GREEN);
 
         $this->stdout("Publishing vendor assets... ", Console::FG_CYAN);
@@ -111,26 +117,26 @@ class AssetController extends Controller
         FileHelper::copyDirectory(\Yii::getAlias('@SamIT/Yii2/StaticAssets/docker'), $buildDir);
         // Add configuration for asset fallback.
         if (isset($this->defaultBundle)) {
-            $fallbackDir = strtr($assetManager->getBundle($this->defaultBundle)->basePath, [$buildDir => '']);
+            $fallbackDir = \strtr($assetManager->getBundle($this->defaultBundle)->basePath, [$buildDir => '']);
             $templateFile = "$buildDir/default.conf.template";
-            $template = strtr(file_get_contents($templateFile),
+            $template = \strtr(\file_get_contents($templateFile),
                 [
                     'try_files $uri' => "try_files \$uri $fallbackDir/\$uri",
-                    '{{source_path}}' => dirname($this->entryScript),
-                    '{{entry_script}}' => basename($this->entryScript)
+                    '{{source_path}}' => \dirname($this->entryScript),
+                    '{{entry_script}}' => \basename($this->entryScript)
                 ]);
-            file_put_contents($templateFile, $template);
+            \file_put_contents($templateFile, $template);
         }
 
         $this->stdout("OK\n", Console::FG_GREEN);
 
         $this->stdout("Starting build...\n", Console::FG_CYAN);
-        $command = strtr('docker build --pull {name} {path}', [
+        $command = \strtr('docker build --pull {name} {path}', [
             '{path}' => $buildDir,
             '{name}' => $this->image ? "-t {$this->image}:{$this->tag}" : ""
         ]);
         $this->stdout($command . "\n", Console::FG_YELLOW);
-        passthru($command, $retval);
+        \passthru($command, $retval);
         if ($retval !== 0) {
             $this->stderr("FAIL\nDocker build failed, leaving build folder intact for inspection\n", Console::FG_RED);
             return;
@@ -145,11 +151,11 @@ class AssetController extends Controller
         }
 
         $this->stdout("Pushing image", Console::FG_CYAN);
-        $command = strtr('docker push {name}', [
+        $command = \strtr('docker push {name}', [
             '{name}' => $this->image . ':' . $this->tag
         ]);
         $this->stdout($command . "\n", Console::FG_YELLOW);
-        passthru($command, $retval);
+        \passthru($command, $retval);
 
         if ($retval !== 0) {
             $this->stderr("FAIL\nDocker push failed\n", Console::FG_RED);

@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace SamIT\Yii2\StaticAssets;
 
@@ -30,16 +30,19 @@ class StaticAssets extends Module
      */
     public $entryScript;
 
-    public function init()
+    /** @var array List of fnmatch patterns with file names to skip. */
+    public $excludedPatterns = [];
+
+    public function init(): void
     {
         parent::init();
         $assetManagerConfig = $this->module->getComponents(true)['assetManager'] ?? [];
         $assetManagerConfig['hashCallback'] = self::hashCallback();
         if ($this->module instanceof Application) {
             if (!isset(\Yii::$aliases['@webroot'])) {
-                \Yii::setAlias('@webroot', sys_get_temp_dir());
+                \Yii::setAlias('@webroot', \sys_get_temp_dir());
             }
-            $assetManagerConfig['basePath'] = sys_get_temp_dir();
+            $assetManagerConfig['basePath'] = \sys_get_temp_dir();
         }
         $this->set('assetManager', $assetManagerConfig);
 
@@ -49,12 +52,12 @@ class StaticAssets extends Module
     {
         return function($path) {
 
-            $dir = is_file($path) ? dirname($path) : $path;
-            $relativePath = strtr($dir, [
-                realpath(\Yii::getAlias('@app')) => 'app',
-                realpath(\Yii::getAlias('@vendor')) => 'vendor'
+            $dir = \is_file($path) ? \dirname($path) : $path;
+            $relativePath = \strtr($dir, [
+                \realpath(\Yii::getAlias('@app')) => 'app',
+                \realpath(\Yii::getAlias('@vendor')) => 'vendor'
             ]);
-            return strtr(trim($relativePath, '/'), ['/' => '_']);
+            return \strtr(\trim($relativePath, '/'), ['/' => '_']);
         };
     }
 

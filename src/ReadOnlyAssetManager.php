@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace SamIT\Yii2\StaticAssets;
 
@@ -19,7 +19,7 @@ class ReadOnlyAssetManager extends \yii\web\AssetManager
      */
     public $assetDevelopmentMode = false;
 
-    public function init()
+    public function init(): void
     {
         if ($this->assetDevelopmentMode)
         {
@@ -29,7 +29,7 @@ class ReadOnlyAssetManager extends \yii\web\AssetManager
             return;
         }
         $this->basePath = Yii::getAlias($this->basePath);
-        $this->baseUrl = rtrim(Yii::getAlias($this->baseUrl), '/');
+        $this->baseUrl = \rtrim(Yii::getAlias($this->baseUrl), '/');
 
     }
 
@@ -40,7 +40,7 @@ class ReadOnlyAssetManager extends \yii\web\AssetManager
         }
 
         $dir = $this->hash($src);
-        $fileName = basename($src);
+        $fileName = \basename($src);
         $dstDir = $this->basePath . DIRECTORY_SEPARATOR . $dir;
         $dstFile = $dstDir . DIRECTORY_SEPARATOR . $fileName;
         return [$dstFile, $this->baseUrl . "/$dir/$fileName"];
@@ -59,7 +59,7 @@ class ReadOnlyAssetManager extends \yii\web\AssetManager
 
     protected function hash($path)
     {
-        return call_user_func(StaticAssets::hashCallback(), $path);
+        return \call_user_func(StaticAssets::hashCallback(), $path);
     }
 
 

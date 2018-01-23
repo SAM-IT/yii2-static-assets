@@ -3,7 +3,9 @@
     "description": "Generate static assets and build a docker nginx container",
     "type": "yii2-extension",
     "require-dev": {
-        "yiisoft/yii2": "^2.0"
+        "yiisoft/yii2": "^2.0",
+        "codeception/codeception": "^2.3",
+        "friendsofphp/php-cs-fixer": "^2.9"
     },
     "license": "MIT",
     "authors": [
@@ -26,5 +28,11 @@
     },
     "extra": {
         "bootstrap": "SamIT\\Yii2\\StaticAssets\\Bootstrap"
+    },
+    "scripts": {
+        "test": "vendor/bin/codecept build && vendor/bin/codecept run --no-interaction",
+        "test-with-cc": "vendor/bin/codecept build && vendor/bin/codecept run --no-interaction --coverage-xml",
+        "lint": "vendor/bin/php-cs-fixer fix --dry-run --verbose --diff",
+        "lint-fix": "vendor/bin/php-cs-fixer fix --verbose"
     }
 }
