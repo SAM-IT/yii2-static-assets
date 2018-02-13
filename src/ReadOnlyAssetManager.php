@@ -59,7 +59,7 @@ class ReadOnlyAssetManager extends \yii\web\AssetManager
 
     protected function hash($path)
     {
-        return \call_user_func(StaticAssets::hashCallback(), $path);
+        return \call_user_func(Module::hashCallback(), $path);
     }
 
 

@@ -5,7 +5,7 @@ namespace SamIT\Yii2\StaticAssets\controllers;
 
 
 use SamIT\Yii2\StaticAssets\helpers\AssetHelper;
-use SamIT\Yii2\StaticAssets\StaticAssets;
+use SamIT\Yii2\StaticAssets\Module;
 use yii\console\Controller;
 use yii\helpers\Console;
 use yii\helpers\FileHelper;
@@ -15,7 +15,7 @@ use yii\web\AssetManager;
 /**
  * Class AssetController
  * @package SamIT\Yii2\StaticAssets\controllers
- * @property StaticAssets $module
+ * @property Module $module
  */
 class AssetController extends Controller
 {
@@ -69,13 +69,15 @@ class AssetController extends Controller
     }
 
 
-    public function actionIndex($path): void
+    public function actionPublish($path): void
     {
-        $fullPath = \getcwd() . "/$path";
-        $assetManager = $this->getAssetManager($fullPath);
+        $assetManager = $this->getAssetManager($path);
+        $this->stdout("Publishing assets... ", Console::FG_CYAN);
         AssetHelper::publishAssets($assetManager, \Yii::getAlias('@app'));
-        AssetHelper::createGzipFiles($fullPath);
-
+        $this->stdout("OK\n", Console::FG_GREEN);
+        $this->stdout("Compressing assets... ", Console::FG_CYAN);
+        AssetHelper::createGzipFiles($path);
+        $this->stdout("OK\n", Console::FG_GREEN);
     }
 
     protected function getAssetManager($fullPath): AssetManager

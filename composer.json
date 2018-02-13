@@ -3,7 +3,6 @@
     "description": "Generate static assets and build a docker nginx container",
     "type": "yii2-extension",
     "require-dev": {
-        "yiisoft/yii2": "^2.0",
         "codeception/codeception": "^2.3",
         "friendsofphp/php-cs-fixer": "^2.9"
     },
@@ -14,7 +13,12 @@
             "email": "sam@mousa.nl"
         }
     ],
-    "require": {},
+    "require": {
+        "yiisoft/yii2": "^2.0",
+        "codeception/codeception": "^2.3",
+        "docker-php/docker-php": "dev-2.0-dev",
+        "docker-php/docker-php-api": "4.1.35.x-dev"
+    },
     "repositories": [
         {
             "type": "composer",
