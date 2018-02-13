@@ -170,7 +170,7 @@ NGINX
         }
         $builder->addFile('/build/' . \basename($root), $root);
         $builder->run('cd /build && composer dumpautoload -o');
-        $builder->run('/usr/local/bin/php /build/' . $this->getConsoleEntryScript() . 'staticAssets/asset/publish /build/assets');
+        $builder->run('/usr/local/bin/php /build/' . $this->getConsoleEntryScript() . ' staticAssets/asset/publish /build/assets');
         /**
          * END COMPOSER
          */
