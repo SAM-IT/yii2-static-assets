@@ -257,16 +257,6 @@ NGINX
         return \implode("\n", $flattenedConfig);
     }
 
-    public function getControllerPath()
-    {
-        $result= parent::getControllerPath();
-        var_dump($result);
-        var_dump(scandir($result));
-        return $result;
-    }
-
-
-
     /**
      * @return string A shell script that checks for existence of (non-empty) variables and runs php-fpm.
      */
