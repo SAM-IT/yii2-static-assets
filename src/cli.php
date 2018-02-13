@@ -1,14 +1,15 @@
 <?php
+declare(strict_types=1);
 $dir = __DIR__;
-while(!file_exists($dir . '/vendor/autoload.php') && $dir != '/') {
-    $dir = dirname($dir);
+while(!\file_exists($dir . '/vendor/autoload.php') && $dir !== '/') {
+    $dir = \dirname($dir);
 }
-if (!file_exists($dir . '/vendor/autoload.php')) {
+if (!\file_exists($dir . '/vendor/autoload.php')) {
     die("Composer autoloader not found");
 }
 
 require_once $dir . '/vendor/autoload.php';
-define('YII_DEBUG', 1);
+\define('YII_DEBUG', 1);
 class Yii extends \yii\BaseYii{};
 \Yii::$container = new \yii\di\Container();
 $application = new \yii\console\Application([

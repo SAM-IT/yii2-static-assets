@@ -5,11 +5,11 @@ use Codeception\Test\Unit;
 
 class ModuleBootstrapTest extends Unit
 {
-    protected function _before()
+    protected function _before(): void
     {
     }
 
-    protected function _after()
+    protected function _after(): void
     {
     }
 

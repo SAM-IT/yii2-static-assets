@@ -204,14 +204,14 @@ NGINX
         }
 
 
-        $prefix = str_repeat(' ', $indent ?? 0);
+        $prefix = \str_repeat(' ', $indent ?? 0);
         foreach($directives as $key => $value) {
-            if (is_int($key)) {
+            if (\is_int($key)) {
                 $result[] = $value . ';';
                 continue;
             }
 
-            if (!is_array($value)) {
+            if (!\is_array($value)) {
                 $result[] = "{$prefix}{$key} {$value};";
                 continue;
             }
@@ -233,14 +233,14 @@ NGINX
 
         $fastcgiConfig = [
             'fastcgi_pass' => '$upstream_endpoint',
-            'root' => dirname($this->entryScript),
+            'root' => \dirname($this->entryScript),
         ];
 
         foreach($this->fastcgiParams as $name => $value) {
-            if (in_array($name, ['read_timeout', 'connect_timeout'])) {
+            if (\in_array($name, ['read_timeout', 'connect_timeout'], true)) {
                 $fastcgiConfig["fastcgi_$name"] = $value;
             } else {
-                $fastcgiConfig['fastcgi_param ' . strtoupper($name)] = $value;
+                $fastcgiConfig['fastcgi_param ' . \strtoupper($name)] = $value;
             }
         }
 
@@ -275,7 +275,7 @@ NGINX
 
         }
 
-        $result[] = 'envsubst "' . implode(' ', $variables) . '" < /nginx.conf.template > /nginx.conf';
+        $result[] = 'envsubst "' . \implode(' ', $variables) . '" < /nginx.conf.template > /nginx.conf';
         $result[] = 'cat nginx.conf';
         $result[] = 'exec nginx -c /nginx.conf';
         return \implode("\n", $result);
