@@ -98,14 +98,10 @@ NGINX
         'query_string' => '$query_string',
         'remote_addr' => '$remote_addr',
         'request_method' => '$request_method',
-        'script_name' => '$fastcgi_script_name',
         'server_name' => '$server_name',
         'server_port' => '$server_port',
         'server_protocol' => '$server_protocol',
         'server_software' => 'nginx/$nginx_version',
-
-        // Not in spec, but required by PHPFPM
-        'script_filename' => '$document_root$fastcgi_script_name',
 
         // Not in spec, but required by Yii
         'request_uri' => '$request_uri',
@@ -234,7 +230,8 @@ NGINX
 
         $fastcgiConfig = [
             'fastcgi_pass' => '$upstream_endpoint',
-            'root' => \dirname($this->entryScript),
+            'fastcgi_param SCRIPT_FILENAME' => $this->entryScript,
+            'fastcgi_param SCRIPT_NAME' => '/' . basename($this->entryScript)
         ];
 
         foreach($this->fastcgiParams as $name => $value) {
