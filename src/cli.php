@@ -14,7 +14,7 @@ class Yii extends \yii\BaseYii{};
 \Yii::$container = new \yii\di\Container();
 $application = new \yii\console\Application([
     'id' => 'yii2-phpfpm-test',
-    'basePath' => '/tmp',
+    'basePath' => __DIR__,
     'aliases' => [
         '@SamIT/Yii2/StaticAssets' => __DIR__
     ],

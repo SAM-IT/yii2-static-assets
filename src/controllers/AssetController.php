@@ -18,24 +18,6 @@ use yii\web\AssetManager;
 class AssetController extends Controller
 {
     /**
-     * @var bool Whether to push the image after a successful build.
-     * If not explicitly set will take its default from module config.
-     */
-    public $push;
-
-    /**
-     * @var string The name of the created image
-     * If not explicitly set will take its default from module config.
-     */
-    public $image;
-
-    /**
-     * @var string The tag of the created image
-     * If not explicitly set will take its default from module config.
-     */
-    public $tag;
-
-    /**
      * @var string The default asset bundle
      * If not explicitly set will take its default from module config.
      */
@@ -57,12 +39,8 @@ class AssetController extends Controller
     public function init(): void
     {
         parent::init();
-        $this->push = $this->module->push;
-        $this->image = $this->module->image;
-        $this->tag = $this->module->tag;
         $this->defaultBundle = $this->module->defaultBundle;
         $this->baseUrl = $this->module->baseUrl;
-        $this->entryScript = $this->module->entryScript;
         $this->excludedPatterns = $this->module->excludedPatterns;
     }
 
