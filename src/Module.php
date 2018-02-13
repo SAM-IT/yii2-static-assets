@@ -5,6 +5,7 @@ namespace SamIT\Yii2\StaticAssets;
 
 use Docker\Context\Context;
 use Docker\Context\ContextBuilder;
+use yii\base\InvalidConfigException;
 use yii\console\Application;
 
 class Module extends \yii\base\Module
@@ -168,9 +169,8 @@ NGINX
             throw new \Exception('Alias @app must be defined.');
         }
         $builder->addFile('/build/' . \basename($root), $root);
-        $builder->addFile('/build/cli.php', __DIR__ . '/cli.php');
         $builder->run('cd /build && composer dumpautoload -o');
-        $builder->run('/usr/local/bin/php /build/cli.php staticAssets/asset/publish /build/assets');
+        $builder->run('/usr/local/bin/php /build/' . $this->getConsoleEntryScript() . 'staticAssets/asset/publish /build/assets');
         /**
          * END COMPOSER
          */
@@ -280,5 +280,19 @@ NGINX
         $result[] = 'cat nginx.conf';
         $result[] = 'exec nginx -c /nginx.conf';
         return \implode("\n", $result);
+    }
+
+    /**
+     * @throws InvalidConfigException in case the app is not configured as expected
+     * @return string the relative path of the (console) entry script with respect to the project (not app) root.
+     */
+    private function getConsoleEntryScript(): string
+    {
+        $full = \array_slice(\debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), -1)[0]['file'];
+        $relative = \strtr($full, [\dirname(\Yii::getAlias('@app')) => '']);
+        if ($relative === $full){
+            throw new InvalidConfigException("The console entry script must be located inside the @app directory.");
+        }
+        return \ltrim($relative, '/');
     }
 }
