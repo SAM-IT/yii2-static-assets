@@ -5,7 +5,6 @@ namespace SamIT\Yii2\StaticAssets;
 
 use Docker\Context\Context;
 use Docker\Context\ContextBuilder;
-use yii\base\InvalidConfigException;
 use yii\console\Application;
 
 class Module extends \yii\base\Module
@@ -15,10 +14,25 @@ class Module extends \yii\base\Module
      */
     public $baseUrl;
 
+    /**
+     * @var string The name of the created image.
+     */
     public $image;
+
+    /**
+     * @var string The tag of the created image.
+     */
     public $tag = 'latest';
 
+    /**
+     * @var bool wheter to push successful builds.
+     */
     public $push = false;
+
+    /**
+     * @var string Location of composer.json / composer.lock
+     */
+    public $composerFilePath = '@app/../';
 
     /**
      * @var string The class of the default asset bundle. This will be used to look for files like /favicon.ico
@@ -33,12 +47,6 @@ class Module extends \yii\base\Module
 
     /** @var array List of fnmatch patterns with file names to skip. */
     public $excludedPatterns = [];
-
-
-    /**
-     * @var string Location of composer.json / composer.lock
-     */
-    public $composerFilePath = '@app/../';
 
     public $nginxConfig = [
         'daemon' => 'off',
