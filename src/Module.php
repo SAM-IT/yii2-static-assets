@@ -231,7 +231,7 @@ NGINX
         $fastcgiConfig = [
             'fastcgi_pass' => '$upstream_endpoint',
             'fastcgi_param SCRIPT_FILENAME' => $this->entryScript,
-            'fastcgi_param SCRIPT_NAME' => '/' . basename($this->entryScript)
+            'fastcgi_param SCRIPT_NAME' => '/' . \basename($this->entryScript)
         ];
 
         foreach($this->fastcgiParams as $name => $value) {
