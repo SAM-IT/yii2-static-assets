@@ -6,7 +6,6 @@ namespace SamIT\Yii2\StaticAssets\helpers;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use yii\helpers\FileHelper;
 use yii\helpers\StringHelper;
 use yii\web\AssetBundle;
 use yii\web\AssetManager;
@@ -110,8 +109,9 @@ class AssetHelper
             }
             return $classes;
         } catch(\Throwable $t) {
+            throw $t;
             echo "Throwable:";
-            \var_dump($t);
+            \var_dump($t->getMessage());
             die();
         } finally {
             \spl_autoload_unregister($autoLoader);
@@ -129,28 +129,13 @@ class AssetHelper
     public static function getClassNames(string $file): array
     {
         $contents = \file_get_contents($file);
-//        echo "$file - tokenizing...";
         $tokens = \token_get_all($contents);
-//        echo "OK\n";
         $namespace = self::parseNameSpace($tokens);
 
         $excludeClasses = [
-            '/test/i'
+            '/^Object$/i'
         ];
-        $excludeNamespaces = [
-            '/^Composer/',
-            '/^Symfony/',
-            '/^Codeception/',
-            '/^yii\\composer/',
-            '/test/i'
-        ];
-        // Exclude some namespaces.
-        foreach($excludeNamespaces as $regex) {
-            if (\preg_match($regex, $namespace)) {
-                return [];
-            }
 
-        }
         $classes = [];
         // Parse all classes.
         while (true) {
@@ -161,7 +146,7 @@ class AssetHelper
                 break;
             }
             foreach($excludeClasses as $regex) {
-                if (\preg_match($regex, $namespace)) {
+                if (\preg_match($regex, $class)) {
                     continue 2;
                 }
             }
