@@ -19,7 +19,7 @@ class Bootstrap implements BootstrapInterface
         if ($app instanceof \yii\console\Application) {
             if (!$app->hasModule("staticAssets")) {
                 $app->setModule("staticAssets", [
-                    'class' => StaticAssets::class
+                    'class' => Module::class
                 ]);
             }
         }
