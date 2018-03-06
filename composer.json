@@ -2,6 +2,8 @@
     "name": "sam-it/yii2-static-assets",
     "description": "Generate static assets and build a docker nginx container",
     "type": "yii2-extension",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require-dev": {
         "yiisoft/yii2": "^2.0",
         "codeception/codeception": "^2.3",
@@ -14,21 +16,21 @@
             "email": "sam@mousa.nl"
         }
     ],
-    "require": {},
+    "require": {
+        "docker-php/docker-php": "^2",
+        "docker-php/docker-php-api": "^4.1.25"
+    },
+    "autoload": {
+        "psr-4": {
+            "SamIT\\Yii2\\StaticAssets\\": "src/"
+        }
+    },
     "repositories": [
         {
             "type": "composer",
             "url": "https://asset-packagist.org"
         }
     ],
-    "autoload": {
-        "psr-4": {
-            "SamIT\\Yii2\\StaticAssets\\": "src/"
-        }
-    },
-    "extra": {
-        "bootstrap": "SamIT\\Yii2\\StaticAssets\\Bootstrap"
-    },
     "scripts": {
         "test": "vendor/bin/codecept build && vendor/bin/codecept run --no-interaction",
         "test-with-cc": "vendor/bin/codecept build && vendor/bin/codecept run --no-interaction --coverage-xml",
