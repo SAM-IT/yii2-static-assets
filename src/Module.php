@@ -156,6 +156,8 @@ NGINX
             $builder->addFile('/build/composer.lock', \Yii::getAlias($this->composerFilePath) . '/composer.lock');
         }
 
+        $builder->run('composer global require hirak/prestissimo');
+
         $builder->run('cd /build && composer install --no-dev --no-autoloader --ignore-platform-reqs --prefer-dist && rm -rf /root/.composer');
 
 
