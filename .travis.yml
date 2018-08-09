@@ -11,7 +11,7 @@ matrix:
     - php: '7.1'
       env: COVERAGE=true TEST_COMMAND="composer test-with-cc"
     - php: '7.1'
-      env: COVERAGE=true TEST_COMMAND="composer lint"
+      env: COVERAGE=false TEST_COMMAND="composer lint"
 
 install:
   - travis_retry composer install

@@ -47,6 +47,11 @@ class AssetController extends Controller
 
     public function actionPublish($path): void
     {
+        $this->stdout("Publishing default bundle to webroot... ", Console::FG_CYAN);
+        AssetHelper::publishAssets($this->getAssetManager('/www'), \Yii::getAlias('@app'), $this->excludedPatterns);
+        AssetHelper::createGzipFiles('/www');
+        $this->stdout("OK\n", Console::FG_GREEN);
+
         $assetManager = $this->getAssetManager($path);
         $this->stdout("Publishing application assets... ", Console::FG_CYAN);
         AssetHelper::publishAssets($assetManager, \Yii::getAlias('@app'), $this->excludedPatterns);
