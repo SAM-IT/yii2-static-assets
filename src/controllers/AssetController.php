@@ -8,6 +8,8 @@ use SamIT\Yii2\StaticAssets\helpers\AssetHelper;
 use SamIT\Yii2\StaticAssets\Module;
 use yii\console\Controller;
 use yii\helpers\Console;
+use yii\helpers\FileHelper;
+use yii\web\AssetBundle;
 use yii\web\AssetManager;
 
 /**
@@ -17,12 +19,6 @@ use yii\web\AssetManager;
  */
 class AssetController extends Controller
 {
-    /**
-     * @var string The default asset bundle
-     * If not explicitly set will take its default from module config.
-     */
-    public $defaultBundle;
-
     public $baseUrl;
 
     /**
@@ -39,7 +35,6 @@ class AssetController extends Controller
     public function init(): void
     {
         parent::init();
-        $this->defaultBundle = $this->module->defaultBundle;
         $this->baseUrl = $this->module->baseUrl;
         $this->excludedPatterns = $this->module->excludedPatterns;
     }
@@ -48,8 +43,12 @@ class AssetController extends Controller
     public function actionPublish($path): void
     {
         $this->stdout("Publishing default bundle to webroot... ", Console::FG_CYAN);
-        AssetHelper::publishAssets($this->getAssetManager('/www'), \Yii::getAlias('@app'), $this->excludedPatterns);
-        AssetHelper::createGzipFiles('/www');
+        $class = $this->defaultBundle;
+        /** @var AssetBundle $bundle */
+        $bundle = new $class;
+        $bundle->publish($this->getAssetManager($path));
+        AssetHelper::createGzipFiles($bundle->sourcePath);
+        FileHelper::copyDirectory($bundle->sourcePath, '/build/default');
         $this->stdout("OK\n", Console::FG_GREEN);
 
         $assetManager = $this->getAssetManager($path);

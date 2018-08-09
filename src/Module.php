@@ -7,7 +7,14 @@ use Docker\Context\Context;
 use Docker\Context\ContextBuilder;
 use yii\base\InvalidConfigException;
 use yii\console\Application;
+use yii\web\AssetBundle;
+use yii\web\AssetManager;
 
+/**
+ * Class Module
+ * @package SamIT\Yii2\StaticAssets
+ * @property AssetManager $assetManager
+ */
 class Module extends \yii\base\Module
 {
     /**
@@ -184,6 +191,7 @@ NGINX
         $builder->run('apk add --update --no-cache ' . \implode(' ', $packages));
 //        $builder->volume('/runtime');
         $builder->copy('--from=0 /build/assets', '/www/assets');
+        $builder->copy('--from=0 /build/default', '/www');
         $builder->add('/entrypoint.sh', $this->createEntrypoint());
         $builder->run('chmod +x /entrypoint.sh');
         $builder->add('/nginx.conf.template', $this->createNginxConfig());
