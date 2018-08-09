@@ -45,14 +45,16 @@ class AssetController extends Controller
 
     public function actionPublish($path): void
     {
-        $this->stdout("Publishing default bundle to webroot... ", Console::FG_CYAN);
+        $this->stdout("Publishing default bundle to webroot...\n", Console::FG_CYAN);
         if (isset($this->defaultBundle)) {
             $class = $this->defaultBundle;
             /** @var AssetBundle $bundle */
             $bundle = new $class;
             $bundle->publish($this->getAssetManager($path));
             AssetHelper::createGzipFiles($bundle->sourcePath);
-            FileHelper::copyDirectory($bundle->sourcePath, '/build/default');
+            $this->stdout("Copying {$bundle->sourcePath} to {$path}/default...\n", Console::FG_CYAN);
+            FileHelper::copyDirectory($bundle->sourcePath, "$path/default");
+            passthru("ls -la $path/default");
             $this->stdout("OK\n", Console::FG_GREEN);
         }
 
