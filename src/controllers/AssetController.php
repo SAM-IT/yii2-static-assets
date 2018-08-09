@@ -51,10 +51,12 @@ class AssetController extends Controller
             /** @var AssetBundle $bundle */
             $bundle = new $class;
             $bundle->publish($this->getAssetManager($path));
-            AssetHelper::createGzipFiles($bundle->sourcePath);
             $this->stdout("Copying {$bundle->sourcePath} to {$path}/default...\n", Console::FG_CYAN);
+            passthru("ls -la {$bundle->sourcePath}");
             FileHelper::copyDirectory($bundle->sourcePath, "$path/default");
-            passthru("ls -la $path/default");
+            AssetHelper::createGzipFiles("$path/default");
+
+
             $this->stdout("OK\n", Console::FG_GREEN);
         }
 
