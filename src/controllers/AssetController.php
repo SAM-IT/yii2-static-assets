@@ -52,11 +52,10 @@ class AssetController extends Controller
             $bundle = new $class;
             $bundle->publish($this->getAssetManager($path));
             $this->stdout("Copying {$bundle->sourcePath} to {$path}/default...\n", Console::FG_CYAN);
-            $sourcePath = \Yii::getAlias($bundle->sourcePath);
-            echo "$sourcePath";
+            echo "$bundle->basePath";
 
-            passthru("ls -la {$sourcePath}");
-            FileHelper::copyDirectory($bundle->sourcePath, "$path/default");
+            passthru("ls -la {$bundle->basePath}");
+            FileHelper::copyDirectory($bundle->basePath, "$path/default");
             AssetHelper::createGzipFiles("$path/default");
 
 
