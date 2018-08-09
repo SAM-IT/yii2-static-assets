@@ -191,7 +191,7 @@ NGINX
         $builder->run('apk add --update --no-cache ' . \implode(' ', $packages));
 //        $builder->volume('/runtime');
         $builder->copy('--from=0 /build/assets', '/www/assets');
-        $builder->copy('--from=0 /build/default', '/www');
+        $builder->copy('--from=0 /build/assets/default', '/www');
         $builder->add('/entrypoint.sh', $this->createEntrypoint());
         $builder->run('chmod +x /entrypoint.sh');
         $builder->add('/nginx.conf.template', $this->createNginxConfig());
