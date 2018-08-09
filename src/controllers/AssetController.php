@@ -74,7 +74,9 @@ class AssetController extends Controller
     protected function getAssetManager($fullPath): AssetManager
     {
         $this->stdout("Creating asset path: $fullPath... ", Console::FG_CYAN);
-        \mkdir($fullPath, 0777, true);
+        if (!is_dir($fullPath)) {
+            \mkdir($fullPath, 0777, true);
+        }
         $this->stdout("OK\n", Console::FG_GREEN);
         // Override some configuration.
         $assetManagerConfig = $this->module->getComponents()['assetManager'];
