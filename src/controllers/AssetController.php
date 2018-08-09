@@ -19,6 +19,8 @@ use yii\web\AssetManager;
  */
 class AssetController extends Controller
 {
+    public $defaultBundle;
+
     public $baseUrl;
 
     /**
@@ -35,6 +37,7 @@ class AssetController extends Controller
     public function init(): void
     {
         parent::init();
+        $this->defaultBundle = $this->module->defaultBundle;
         $this->baseUrl = $this->module->baseUrl;
         $this->excludedPatterns = $this->module->excludedPatterns;
     }
@@ -43,13 +46,15 @@ class AssetController extends Controller
     public function actionPublish($path): void
     {
         $this->stdout("Publishing default bundle to webroot... ", Console::FG_CYAN);
-        $class = $this->defaultBundle;
-        /** @var AssetBundle $bundle */
-        $bundle = new $class;
-        $bundle->publish($this->getAssetManager($path));
-        AssetHelper::createGzipFiles($bundle->sourcePath);
-        FileHelper::copyDirectory($bundle->sourcePath, '/build/default');
-        $this->stdout("OK\n", Console::FG_GREEN);
+        if (isset($this->defaultBundle)) {
+            $class = $this->defaultBundle;
+            /** @var AssetBundle $bundle */
+            $bundle = new $class;
+            $bundle->publish($this->getAssetManager($path));
+            AssetHelper::createGzipFiles($bundle->sourcePath);
+            FileHelper::copyDirectory($bundle->sourcePath, '/build/default');
+            $this->stdout("OK\n", Console::FG_GREEN);
+        }
 
         $assetManager = $this->getAssetManager($path);
         $this->stdout("Publishing application assets... ", Console::FG_CYAN);
