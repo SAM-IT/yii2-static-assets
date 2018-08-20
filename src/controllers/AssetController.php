@@ -54,14 +54,14 @@ class AssetController extends Controller
             $this->stdout("Copying {$bundle->basePath} to {$path}/default...\n", Console::FG_CYAN);
             echo "$bundle->basePath";
 
-            passthru("ls -la {$bundle->basePath}");
+            \passthru("ls -la {$bundle->basePath}");
             FileHelper::copyDirectory($bundle->basePath, "$path/default");
             AssetHelper::createGzipFiles("$path/default");
 
 
             $this->stdout("OK\n", Console::FG_GREEN);
         } else {
-            mkdir("$path/default");
+            \mkdir("$path/default");
         }
 
         $assetManager = $this->getAssetManager($path);
@@ -82,7 +82,7 @@ class AssetController extends Controller
     protected function getAssetManager($fullPath): AssetManager
     {
         $this->stdout("Creating asset path: $fullPath... ", Console::FG_CYAN);
-        if (!is_dir($fullPath)) {
+        if (!\is_dir($fullPath)) {
             \mkdir($fullPath, 0777, true);
         }
         $this->stdout("OK\n", Console::FG_GREEN);
