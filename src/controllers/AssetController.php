@@ -51,7 +51,7 @@ class AssetController extends Controller
             /** @var AssetBundle $bundle */
             $bundle = new $class;
             $bundle->publish($this->getAssetManager($path));
-            $this->stdout("Copying {$bundle->sourcePath} to {$path}/default...\n", Console::FG_CYAN);
+            $this->stdout("Copying {$bundle->basePath} to {$path}/default...\n", Console::FG_CYAN);
             echo "$bundle->basePath";
 
             passthru("ls -la {$bundle->basePath}");
@@ -60,6 +60,8 @@ class AssetController extends Controller
 
 
             $this->stdout("OK\n", Console::FG_GREEN);
+        } else {
+            mkdir("$path/default");
         }
 
         $assetManager = $this->getAssetManager($path);
