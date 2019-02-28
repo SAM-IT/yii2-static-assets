@@ -29,7 +29,7 @@ This extension provides a console command that will publish all your assets to a
 
 To publish your assets run the following command:
 ````
-yii staticAssets/assets/publish build12345
+yii staticAssets/asset/publish build12345
 ````
 
 This will create the directory `build12345` inside your runtime directory and publish all assets there.
@@ -44,7 +44,7 @@ Each file that ends with `.php` is then processed:
 # Container building
 To build an nignx container for server your application use this:
 ````
-yii staticAssets/assets/build-container
+yii staticAssets/asset/build-container
 ````
 You can configure the module to set some default values.
 
