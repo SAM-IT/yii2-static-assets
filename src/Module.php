@@ -174,7 +174,7 @@ NGINX
             throw new \Exception('Alias @app must be defined.');
         }
         $builder->addFile('/build/' . \basename($root), $root);
-        $builder->run('cd /build && composer dumpautoload -o');
+        $builder->run('cd /build && composer dumpautoload --no-dev -o');
         $builder->run('/usr/local/bin/php /build/' . $this->getConsoleEntryScript() . ' staticAssets/asset/publish /build/assets');
         /**
          * END COMPOSER
