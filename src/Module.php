@@ -164,6 +164,10 @@ NGINX
         }
 
         $builder->run('composer global require hirak/prestissimo');
+        $builder->run('apk add --update npm');
+        $builder->run('npm install @babel/core @babel/cli @babel/preset-env');
+        $builder->run('npm install -g @babel/core');
+
 
         $builder->run('cd /build && composer install --no-dev --no-autoloader --ignore-platform-reqs --prefer-dist && rm -rf /root/.composer');
 
