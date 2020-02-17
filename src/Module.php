@@ -124,7 +124,9 @@ NGINX
     public function init(): void
     {
         parent::init();
-        $assetManagerConfig = $this->module->getComponents(true)['assetManager'] ?? [];
+        $assetManagerConfig = $this->getComponents(true)['assetManager']
+            ?? $this->module->getComponents(true)['assetManager']
+            ?? [];
         $assetManagerConfig['hashCallback'] = self::hashCallback();
         if ($this->module instanceof Application) {
             if (!isset(\Yii::$aliases['@webroot'])) {
