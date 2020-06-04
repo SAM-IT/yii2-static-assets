@@ -31,7 +31,12 @@
             "SamIT\\Yii2\\StaticAssets\\": "src/"
         }
     },
-
+    "autoload-dev": {
+        "classmap": [
+            "vendor/yiisoft/yii2/Yii.php",
+            "tests"
+        ]
+    },
     "extra": {
         "bootstrap": "SamIT\\Yii2\\StaticAssets\\Bootstrap",
         "hooks": {

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+namespace tests;
 
 use Docker\API\Model\BuildInfo;
 use Docker\API\Normalizer\NormalizerFactory;
