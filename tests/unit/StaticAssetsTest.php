@@ -19,7 +19,5 @@ class StaticAssetsTest extends \Codeception\Test\Unit
         $module = \Yii::$app->getModule('staticAssets');
 
 //        $nginxConfig = $module->getNginxConfig();
-
-
     }
 }

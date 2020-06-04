@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace SamIT\Yii2\StaticAssets\controllers;
 
-
 use SamIT\Yii2\StaticAssets\helpers\AssetHelper;
 use SamIT\Yii2\StaticAssets\Module;
 use yii\console\Controller;

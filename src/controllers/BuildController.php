@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace SamIT\Yii2\StaticAssets\controllers;
 
-
 use Docker\API\Model\AuthConfig;
 use Docker\API\Model\BuildInfo;
 use Docker\API\Model\PushImageInfo;
@@ -43,25 +42,9 @@ class BuildController extends Controller
      */
     public $push;
 
-    /**
-     * @var Docker
-     */
-    protected $docker;
-
-    /**
-     * @var string the user to authenticate against the repository
-     */
-    public $user;
-
-    /**
-     * @var string the password to authenticate against the repository
-     */
-    public $password;
-
     public function init(): void
     {
         parent::init();
-        $this->docker = Docker::create();
         $this->push = $this->module->push;
         $this->image = $this->module->image;
         $this->tag = $this->module->tag;
@@ -73,64 +56,20 @@ class BuildController extends Controller
             throw new InvalidConfigException("When using the push option, you must configure or provide user, password and image");
         }
 
-        $params = [];
+        $name = "{$this->image}:{$this->tag}";
 
-
-        if (isset($this->image)) {
-            $name = "{$this->image}:{$this->tag}";
-            $params['t'] = $name;
-        }
-        $buildStream = $this->createBuildStream($params);
+        $docker = new \SamIT\Docker\Docker();
+        $context =  $this->module->createBuildContext();
         $this->color = true;
-        $buildStream->onFrame(function(BuildInfo $buildInfo): void {
-            $this->stdout($buildInfo->getStream(), Console::FG_CYAN);
-            $this->stdout($buildInfo->getProgress(), Console::FG_YELLOW);
-            $this->stdout($buildInfo->getStatus(), Console::FG_RED);
-            if (!empty($buildInfo->getProgressDetail())) {
-                $this->stdout($buildInfo->getProgressDetail()->getMessage(), Console::FG_YELLOW);
-            }
-            if (!empty($buildInfo->getErrorDetail())) {
-                $this->stdout($buildInfo->getErrorDetail()->getCode() . ':' . $buildInfo->getErrorDetail()->getMessage(), Console::FG_YELLOW);
-            }
-            if (!empty($buildInfo->getError())) {
-                throw new \Exception($buildInfo->getError() . ':' . $buildInfo->getErrorDetail()->getMessage());
-            }
-        });
-        $buildStream->wait();
-        $this->stdout("Wait finished\n");
-        $buildStream->wait();
+        $docker->build($context, $name);
+
+
 
         if ($this->push) {
-            $authConfig = new AuthConfig();
-            $authConfig->setUsername($this->user);
-            $authConfig->setPassword($this->password);
-            $params = [
-                'X-Registry-Auth' => $authConfig
-            ];
-            /** @var PushStream $pushStream */
-            $pushStream = $this->docker->imagePush($name, [], $params ?? [],  Docker::FETCH_OBJECT);
-
-            if ($pushStream instanceof ResponseInterface) {
-                throw new \Exception($pushStream->getReasonPhrase() . ':' . $pushStream->getBody()->getContents(), $pushStream->getStatusCode());
-            }
-
-            $pushStream->onFrame(function(PushImageInfo $pushImageInfo): void {
-                if (!empty($pushImageInfo->getError())) {
-                    throw new \Exception($pushImageInfo->getError());
-                }
-                $this->stdout($pushImageInfo->getProgress(), Console::FG_YELLOW);
-                $this->stdout($pushImageInfo->getStatus(), Console::FG_RED);
-            });
-            $pushStream->wait();
+            $docker->push($name);
         }
     }
 
-    public function createBuildStream(array $params = []): BuildStream
-    {
-
-        $context = $this->module->createBuildContext();
-        return $this->docker->imageBuild($context->toStream(), $params, [], Docker::FETCH_OBJECT);
-    }
 
     public function options($actionID)
     {
@@ -141,10 +80,7 @@ class BuildController extends Controller
                 $result[] = 'push';
                 $result[] = 'image';
                 $result[] = 'tag';
-                $result[] = 'user';
-                $result[] = 'password';
                 break;
-
         }
         return $result;
     }
@@ -155,8 +91,6 @@ class BuildController extends Controller
         $result['p'] = 'push';
         $result['t'] = 'tag';
         $result['i'] = 'image';
-        $result['u'] = 'user';
-        $result['P'] = 'password';
         return $result;
     }
 
@@ -171,6 +105,4 @@ class BuildController extends Controller
         echo $string;
         return \strlen($string);
     }
-
-
 }

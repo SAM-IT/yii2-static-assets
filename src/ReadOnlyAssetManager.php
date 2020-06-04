@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace SamIT\Yii2\StaticAssets;
 
-
 use Yii;
 
 /**
@@ -21,8 +20,7 @@ class ReadOnlyAssetManager extends \yii\web\AssetManager
 
     public function init(): void
     {
-        if ($this->assetDevelopmentMode)
-        {
+        if ($this->assetDevelopmentMode) {
             $this->baseUrl = '/dev-assets';
             $this->basePath = '/tmp/assets';
             $this->forceCopy = true;
@@ -30,7 +28,6 @@ class ReadOnlyAssetManager extends \yii\web\AssetManager
         }
         $this->basePath = Yii::getAlias($this->basePath);
         $this->baseUrl = \rtrim(Yii::getAlias($this->baseUrl), '/');
-
     }
 
     protected function publishFile($src)
@@ -61,6 +58,4 @@ class ReadOnlyAssetManager extends \yii\web\AssetManager
     {
         return \call_user_func(Module::hashCallback(), $path);
     }
-
-
 }

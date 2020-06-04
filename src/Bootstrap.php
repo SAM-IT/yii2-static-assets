@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace SamIT\Yii2\StaticAssets;
 
-
 use yii\base\Application;
 use yii\base\BootstrapInterface;
 
@@ -23,6 +22,5 @@ class Bootstrap implements BootstrapInterface
                 ]);
             }
         }
-
     }
 }

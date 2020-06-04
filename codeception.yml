@@ -8,8 +8,8 @@ actor_suffix: Tester
 extensions:
   enabled:
     - Codeception\Extension\RunFailed
+bootstrap: _bootstrap.php
 settings:
-  bootstrap: _bootstrap.php
   colors: true
   memory_limit: 1024M
 params:

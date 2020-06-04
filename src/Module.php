@@ -3,11 +3,9 @@ declare(strict_types=1);
 
 namespace SamIT\Yii2\StaticAssets;
 
-use Docker\Context\Context;
-use Docker\Context\ContextBuilder;
+use SamIT\Docker\Context;
 use yii\base\InvalidConfigException;
 use yii\console\Application;
-use yii\web\AssetBundle;
 use yii\web\AssetManager;
 
 /**
@@ -135,12 +133,11 @@ NGINX
             $assetManagerConfig['basePath'] = \sys_get_temp_dir();
         }
         $this->set('assetManager', $assetManagerConfig);
-
     }
 
     public static function hashCallback(): \Closure
     {
-        return function($path) {
+        return function ($path) {
 
             $dir = \is_file($path) ? \dirname($path) : $path;
             $relativePath = \strtr($dir, [
@@ -154,24 +151,24 @@ NGINX
 
     public function createBuildContext(): Context
     {
-        $builder = new ContextBuilder();
+        $context = new Context();
 
         /**
          * BEGIN COMPOSER
          */
-        $builder->from('composer');
-        $builder->addFile('/build/composer.json', \Yii::getAlias($this->composerFilePath) .'/composer.json');
+        $context->from('composer');
+        $context->addFile('/build/composer.json', \Yii::getAlias($this->composerFilePath) .'/composer.json');
         if (\file_exists(\Yii::getAlias($this->composerFilePath) . '/composer.lock')) {
-            $builder->addFile('/build/composer.lock', \Yii::getAlias($this->composerFilePath) . '/composer.lock');
+            $context->addFile('/build/composer.lock', \Yii::getAlias($this->composerFilePath) . '/composer.lock');
         }
 
-        $builder->run('composer global require hirak/prestissimo');
-        $builder->run('apk add --update npm');
-        $builder->run('npm install @babel/core @babel/cli @babel/preset-env');
-        $builder->run('npm install -g @babel/core');
+        $context->run('composer global require hirak/prestissimo');
+        $context->run('apk add --update npm');
+        $context->run('npm install @babel/core @babel/cli @babel/preset-env');
+        $context->run('npm install -g @babel/core');
 
 
-        $builder->run('cd /build && composer install --no-dev --no-autoloader --ignore-platform-reqs --prefer-dist && rm -rf /root/.composer');
+        $context->run('cd /build && composer install --no-dev --no-autoloader --ignore-platform-reqs --prefer-dist && rm -rf /root/.composer');
 
 
         // Add the actual source code.
@@ -179,33 +176,31 @@ NGINX
         if (!\is_string($root)) {
             throw new \Exception('Alias @app must be defined.');
         }
-        $builder->addFile('/build/' . \basename($root), $root);
-        $builder->run('cd /build && composer dumpautoload --no-dev -o');
-        $builder->run('/usr/local/bin/php /build/' . $this->getConsoleEntryScript() . ' staticAssets/asset/publish /build/assets');
+        $context->addFile('/build/' . \basename($root), $root);
+        $context->run('cd /build && composer dumpautoload --no-dev -o');
+        $context->run('/usr/local/bin/php /build/' . $this->getConsoleEntryScript() . ' staticAssets/asset/publish /build/assets');
         /**
          * END COMPOSER
          */
 
 
-        $builder->from('alpine:edge');
+        $context->from('alpine:edge');
         $packages = [
             'nginx',
             'gettext',
-            'tini'
         ];
 
-        $builder->run('apk add --update --no-cache ' . \implode(' ', $packages));
-//        $builder->volume('/runtime');
-        $builder->copy('--from=0 /build/assets', '/www/assets');
-        $builder->copy('--from=0 /build/assets/default', '/www');
-        $builder->add('/entrypoint.sh', $this->createEntrypoint());
-        $builder->run('chmod +x /entrypoint.sh');
-        $builder->add('/nginx.conf.template', $this->createNginxConfig());
-        $builder->run('PHPFPM=test RESOLVER=127.0.0.1 envsubst "\$PHPFPM \$RESOLVER" < /nginx.conf.template > /tmp/nginx.conf');
-        $builder->run("nginx -t -c /tmp/nginx.conf");
-        $builder->entrypoint('["/sbin/tini", "--", "/entrypoint.sh"]');
-        $builder->expose(80);
-        return $builder->getContext();
+        $context->run('apk add --update --no-cache ' . \implode(' ', $packages));
+        $context->copyFromLayer('/www/assets', "0", "/build/assets");
+        $context->copyFromLayer('/www', "0", "/build/assets/default");
+        $context->add('/entrypoint.sh', $this->createEntrypoint());
+        $context->run('chmod +x /entrypoint.sh');
+        $context->add('/nginx.conf.template', $this->createNginxConfig());
+        $context->run('PHPFPM=test RESOLVER=127.0.0.1 envsubst "\$PHPFPM \$RESOLVER" < /nginx.conf.template > /tmp/nginx.conf');
+        $context->run("nginx -t -c /tmp/nginx.conf");
+        $context->entrypoint(["/entrypoint.sh"]);
+        $context->command("EXPOSE 80");
+        return $context;
     }
 
     private function createNginxBlock(?string $name, array $directives): array
@@ -218,7 +213,7 @@ NGINX
 
 
         $prefix = \str_repeat(' ', $indent ?? 0);
-        foreach($directives as $key => $value) {
+        foreach ($directives as $key => $value) {
             if (\is_int($key)) {
                 $result[] = $value . ';';
                 continue;
@@ -232,7 +227,6 @@ NGINX
             foreach ($this->createNginxBlock($key, $value) as $line) {
                 $result[] = $prefix . $line;
             }
-
         }
         if (isset($name)) {
             $result[] = "}";
@@ -250,7 +244,7 @@ NGINX
             'fastcgi_param SCRIPT_NAME' => '/' . \basename($this->entryScript)
         ];
 
-        foreach($this->fastcgiParams as $name => $value) {
+        foreach ($this->fastcgiParams as $name => $value) {
             if (\in_array($name, ['read_timeout', 'connect_timeout'], true)) {
                 $fastcgiConfig["fastcgi_$name"] = $value;
             } else {
@@ -281,12 +275,11 @@ NGINX
 
         $variables = [];
         // Check for variables.
-        foreach($this->environmentVariables as $name) {
+        foreach ($this->environmentVariables as $name) {
             $result[] = \strtr('if [ -z "${name}" ]; then echo "Variable \${name} is required."; exit 1; fi', [
                 '{name}' => $name
             ]);
             $variables[] = '\\$' . $name;
-
         }
 
         $result[] = 'envsubst "' . \implode(' ', $variables) . '" < /nginx.conf.template > /nginx.conf';
@@ -303,7 +296,7 @@ NGINX
     {
         $full = \array_slice(\debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), -1)[0]['file'];
         $relative = \strtr($full, [\dirname(\Yii::getAlias('@app')) => '']);
-        if ($relative === $full){
+        if ($relative === $full) {
             throw new InvalidConfigException("The console entry script must be located inside the @app directory.");
         }
         return \ltrim($relative, '/');

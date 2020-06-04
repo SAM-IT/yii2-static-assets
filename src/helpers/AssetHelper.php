@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace SamIT\Yii2\StaticAssets\helpers;
 
-
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use yii\helpers\StringHelper;
@@ -43,7 +42,7 @@ class AssetHelper
     public static function findAssetBundles(string $baseDir, array $excludedPatterns = []): array
     {
         // We register an autoloader to handle missing classes.
-        $autoLoader = function($class): void {
+        $autoLoader = function ($class): void {
             echo "Autoloading: $class\n";
             $trace = \debug_backtrace(0, 2);
 
@@ -108,7 +107,7 @@ class AssetHelper
                 };
             }
             return $classes;
-        } catch(\Throwable $t) {
+        } catch (\Throwable $t) {
             throw $t;
             echo "Throwable:";
             \var_dump($t->getMessage());
@@ -116,7 +115,6 @@ class AssetHelper
         } finally {
             \spl_autoload_unregister($autoLoader);
         }
-
     }
 
     /**
@@ -145,7 +143,7 @@ class AssetHelper
             if (!isset($class)) {
                 break;
             }
-            foreach($excludeClasses as $regex) {
+            foreach ($excludeClasses as $regex) {
                 if (\preg_match($regex, $class)) {
                     continue 2;
                 }
@@ -168,7 +166,6 @@ class AssetHelper
     {
         self::popUntil($tokens, [T_NAMESPACE]);
         return \implode("", self::popUntil($tokens, [';', '{']));
-
     }
 
     public static function parseClass(array &$tokens): ?string
@@ -177,7 +174,6 @@ class AssetHelper
         $popped = self::popUntil($tokens, ['{', T_EXTENDS, T_IMPLEMENTS]);
 
         return !empty($popped) ? \implode("", $popped) : null;
-
     }
 
     protected static function popUntil(array &$tokens, array $markers): array
@@ -189,13 +185,11 @@ class AssetHelper
             $token = \array_shift($tokens);
             if (\is_array($token) && $token[0] === T_WHITESPACE) {
                 continue;
-
             }
             $popped[] = \is_array($token) ? $token[1] : $token;
 
 
-            foreach($markers as $marker) {
-
+            foreach ($markers as $marker) {
                 if ($token === $marker) {
                     \array_pop($popped);
                     return $popped;
@@ -205,13 +199,11 @@ class AssetHelper
                     \array_pop($popped);
                     return $popped;
                 }
-
             }
 //            echo count($tokens) . "\n";
         }
 
         return $popped;
-
     }
 
     /**
@@ -227,22 +219,19 @@ class AssetHelper
             RecursiveIteratorIterator::CATCH_GET_CHILD // Ignore "Permission denied"
         );
         /** @var \SplFileInfo $file */
-        foreach($iter as $file)
-        {
+        foreach ($iter as $file) {
             if ($file->getExtension() !== 'gz') {
                 $handle = \gzopen($file->getPathname() . '.gz', 'w9');
                 \gzwrite($handle, \file_get_contents($file->getPathname()));
                 \gzclose($handle);
-
             }
         }
     }
 
     public static function publishAssets(AssetManager $assetManager, $baseDir, $excludedPatterns = []): void
     {
-        foreach(self::findAssetBundles($baseDir, $excludedPatterns) as $bundle) {
+        foreach (self::findAssetBundles($baseDir, $excludedPatterns) as $bundle) {
             $assetManager->getBundle($bundle, true);
         }
     }
-
 }

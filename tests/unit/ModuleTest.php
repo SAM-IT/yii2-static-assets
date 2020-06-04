@@ -26,10 +26,9 @@ class ModuleTest extends \Codeception\Test\Unit
     public function testBuild(): void
     {
         $context = $this->module->createBuildContext();
-        $context->setCleanup(false);
         $directory = $context->getDirectory();
 
-        $dockerFile = $context->getDockerfileContent();
+        $dockerFile = file_get_contents("$directory/Dockerfile");
 
         $fileName = \preg_replace('#.*ADD (.+?) /nginx\.conf.*#s', '$1', $dockerFile);
         $this->assertFileExists($directory . '/' . $fileName);
@@ -37,9 +36,5 @@ class ModuleTest extends \Codeception\Test\Unit
 
 //        $fileName = \preg_replace('#.*ADD (.+?) /entrypoint\.sh.*#s', '$2', $dockerFile);
 //        $this->assertFileExists($directory . '/' . $fileName);
-
     }
-
-
-
 }
