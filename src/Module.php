@@ -157,9 +157,17 @@ NGINX
          * BEGIN COMPOSER
          */
         $context->from('composer');
-        $context->addFile('/build/composer.json', \Yii::getAlias($this->composerFilePath) .'/composer.json');
-        if (\file_exists(\Yii::getAlias($this->composerFilePath) . '/composer.lock')) {
-            $context->addFile('/build/composer.lock', \Yii::getAlias($this->composerFilePath) . '/composer.lock');
+        $packageManagerFiles = [
+            'composer.json',
+            'composer.lock',
+            'package.json',
+            'package-lock.json'
+        ];
+        $basePath = \Yii::getAlias($this->composerFilePath);
+        foreach ($packageManagerFiles as $file) {
+            if (file_exists("$basePath/$file")) {
+                $context->addFile("/build/$file", "$basePath/$file");
+            }
         }
 
         $context->run('composer global require hirak/prestissimo');
@@ -168,7 +176,7 @@ NGINX
         $context->run('npm install -g @babel/core');
 
 
-        $context->run('cd /build && composer install --no-dev --no-autoloader --ignore-platform-reqs --prefer-dist && rm -rf /root/.composer');
+        $context->run('cd /build && composer install --no-autoloader --ignore-platform-reqs --prefer-dist');
 
 
         // Add the actual source code.
