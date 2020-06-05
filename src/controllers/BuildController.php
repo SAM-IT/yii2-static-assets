@@ -52,8 +52,8 @@ class BuildController extends Controller
 
     public function actionBuild(): void
     {
-        if ($this->push && !isset($this->image, $this->user, $this->password)) {
-            throw new InvalidConfigException("When using the push option, you must configure or provide user, password and image");
+        if ($this->push && !isset($this->image)) {
+            throw new InvalidConfigException("When using the push option, you must configure or provide image");
         }
 
         $name = "{$this->image}:{$this->tag}";
