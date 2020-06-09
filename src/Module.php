@@ -142,7 +142,8 @@ NGINX
             $dir = \is_file($path) ? \dirname($path) : $path;
             $relativePath = \strtr($dir, [
                 \realpath(\Yii::getAlias('@app')) => 'app',
-                \realpath(\Yii::getAlias('@vendor')) => 'vendor'
+                \realpath(\Yii::getAlias('@vendor')) => 'vendor',
+                \realpath(\Yii::getAlias('@npm')) => 'npm'
             ]);
             return \strtr(\trim($relativePath, '/'), ['/' => '_']);
         };
