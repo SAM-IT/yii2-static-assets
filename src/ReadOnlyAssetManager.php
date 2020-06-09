@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace SamIT\Yii2\StaticAssets;
 
 use Yii;
+use yii\base\NotSupportedException;
 
 /**
  * Class ReadOnlyAssetManager
@@ -32,15 +33,7 @@ class ReadOnlyAssetManager extends \yii\web\AssetManager
 
     protected function publishFile($src)
     {
-        if ($this->assetDevelopmentMode) {
-            return parent::publishFile($src);
-        }
-
-        $dir = $this->hash($src);
-        $fileName = \basename($src);
-        $dstDir = $this->basePath . DIRECTORY_SEPARATOR . $dir;
-        $dstFile = $dstDir . DIRECTORY_SEPARATOR . $fileName;
-        return [$dstFile, $this->baseUrl . "/$dir/$fileName"];
+        throw new NotSupportedException('Publishing files is not supported, publish directories instead');
     }
 
     protected function publishDirectory($src, $options)
