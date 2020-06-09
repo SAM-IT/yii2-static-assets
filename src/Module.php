@@ -135,16 +135,31 @@ NGINX
         $this->set('assetManager', $assetManagerConfig);
     }
 
+    private static function resolvePath(string $string): string
+    {
+        $parts = explode('/', $string);
+        $filteredParts = [];
+        while (!empty($parts)) {
+            $part = array_pop($parts);
+            if ($part === '..') {
+                // Throw away next part
+                array_pop($parts);
+            } else {
+                $filteredParts[] = $part;
+            }
+        }
+        return implode('/', array_reverse($filteredParts));
+    }
+
     public static function hashCallback(): \Closure
     {
-        return function ($path) {
-
-            $dir = \is_file($path) ? \dirname($path) : $path;
-            $relativePath = \strtr($dir, [
-                \realpath(\Yii::getAlias('@app')) => 'app',
-                \realpath(\Yii::getAlias('@vendor')) => 'vendor',
-                \realpath(\Yii::getAlias('@npm')) => 'npm'
-            ]);
+        $replacements = [
+            self::resolvePath(\Yii::getAlias('@app')) => 'app',
+            self::resolvePath(\Yii::getAlias('@vendor')) => 'vendor',
+            self::resolvePath(\Yii::getAlias('@npm')) => 'npm'
+        ];
+        return static function (string $path) use ($replacements) {
+            $relativePath = \strtr(self::resolvePath($path), $replacements);
             return \strtr(\trim($relativePath, '/'), ['/' => '_']);
         };
     }
