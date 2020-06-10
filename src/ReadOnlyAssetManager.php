@@ -36,6 +36,16 @@ class ReadOnlyAssetManager extends \yii\web\AssetManager
         throw new NotSupportedException('Publishing files is not supported, publish directories instead');
     }
 
+    public function publish($path, $options = [])
+    {
+        if ($this->assetDevelopmentMode) {
+            return parent::publish($path, $options);
+        }
+
+        return $this->publishDirectory($path, $options);
+    }
+
+
     protected function publishDirectory($src, $options)
     {
         if ($this->assetDevelopmentMode) {
