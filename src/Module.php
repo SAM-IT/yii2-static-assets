@@ -215,8 +215,6 @@ NGINX
         ];
 
         $context->run('apk add --update --no-cache ' . \implode(' ', $packages));
-        $context->copyFromLayer('/www/assets', "0", "/build/assets");
-        $context->copyFromLayer('/www', "0", "/build/assets/default");
         $context->add('/entrypoint.sh', $this->createEntrypoint());
         $context->run('chmod +x /entrypoint.sh');
         $context->add('/nginx.conf.template', $this->createNginxConfig());
@@ -224,6 +222,8 @@ NGINX
         $context->run("nginx -t -c /tmp/nginx.conf");
         $context->entrypoint(["/entrypoint.sh"]);
         $context->command("EXPOSE 80");
+        $context->copyFromLayer('/www/assets', "0", "/build/assets");
+        $context->copyFromLayer('/www', "0", "/build/assets/default");
         return $context;
     }
 
