@@ -46,6 +46,11 @@ class Module extends \yii\base\Module
     public $defaultBundle;
 
     /**
+     * @var string The application name for advanced yii2 project
+     */
+    public $applicationName = '@app';
+
+    /**
      * @var string The location if your entry script inside your PHP-FPM container / server
      * Does not support aliases, must be absolute.
      */
