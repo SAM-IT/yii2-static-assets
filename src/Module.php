@@ -191,7 +191,6 @@ NGINX
             }
         }
 
-        $context->run('composer global require hirak/prestissimo');
         $context->run('apk add --update npm');
         $context->run('npm install @babel/core @babel/cli @babel/preset-env');
         $context->run('npm install -g @babel/core');
