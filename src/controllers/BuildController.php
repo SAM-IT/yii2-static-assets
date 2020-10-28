@@ -10,7 +10,9 @@ use Docker\Docker;
 use Docker\Stream\BuildStream;
 use Docker\Stream\PushStream;
 use Psr\Http\Message\ResponseInterface;
+use SamIT\Docker\Context;
 use SamIT\Yii2\StaticAssets\Module;
+use Symfony\Component\Filesystem\Filesystem;
 use yii\base\InvalidConfigException;
 use yii\console\Controller;
 use yii\helpers\Console;
@@ -50,6 +52,20 @@ class BuildController extends Controller
         $this->tag = $this->module->tag;
     }
 
+    /**
+     * @param string $targetPath The path where the docker build context should be stored
+     */
+    public function actionCreateContext(string $targetPath): void
+    {
+        $filesystem = new Filesystem();
+        if (!is_dir($targetPath)) {
+            $filesystem->mkdir($targetPath);
+        }
+
+        $context = $this->module->createBuildContext();
+        $filesystem->mirror($context->getDirectory(), $targetPath);
+    }
+
     public function actionBuild(): void
     {
         if ($this->push && !isset($this->image)) {
@@ -59,7 +75,7 @@ class BuildController extends Controller
         $name = "{$this->image}:{$this->tag}";
 
         $docker = new \SamIT\Docker\Docker();
-        $context =  $this->module->createBuildContext();
+        $context = $this->module->createBuildContext();
         $this->color = true;
         $docker->build($context, $name);
 
