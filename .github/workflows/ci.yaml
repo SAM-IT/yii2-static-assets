@@ -47,6 +47,7 @@ jobs:
       - name: Push code coverage
         run: php ocular.phar code-coverage:upload --format=php-clover tests/_output/coverage.xml
   release:
+    if: github.ref == 'refs/heads/master'
     name: Automated release
     needs: [test, cs]
     runs-on: ubuntu-latest
