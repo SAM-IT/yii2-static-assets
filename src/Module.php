@@ -191,6 +191,7 @@ NGINX
             }
         }
 
+        $context->run('cd /build && composer config platform-check false');
         $context->run('apk add --update npm');
         $context->run('npm install @babel/core @babel/cli @babel/preset-env');
         $context->run('npm install -g @babel/core');
