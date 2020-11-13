@@ -92,6 +92,7 @@ class BuildController extends Controller
 
         $result = parent::options($actionID);
         switch ($actionID) {
+            case 'create-context':
             case 'build':
                 $result[] = 'push';
                 $result[] = 'image';
