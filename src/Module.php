@@ -177,7 +177,7 @@ NGINX
         /**
          * BEGIN COMPOSER
          */
-        $context->from('composer');
+        $context->from('composer:2.0');
         $packageManagerFiles = [
             'composer.json',
             'composer.lock',
