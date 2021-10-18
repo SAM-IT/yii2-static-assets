@@ -18,6 +18,11 @@ server {
         try_files $uri =404;
     }
 
+    location ^~ /versioned-assets {
+              rewrite ^/versioned-assets/[^/]+/(.+)$ /assets/$1 redirect;
+              return 200 $uri;
+    	}
+
     location = /{{entry_script}} {
         root {{source_path}};
         fastcgi_pass $upstream_endpoint;

@@ -53,7 +53,7 @@
     },
     "scripts": {
         "post-install-cmd": "cghooks add --ignore-lock",
-        "test": "codecept run --coverage",
+        "test": "codecept run",
         "lint": "vendor/bin/phpcs",
         "lint-fix": "vendor/bin/phpcbf"
     }
