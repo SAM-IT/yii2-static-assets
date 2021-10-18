@@ -22,7 +22,6 @@ class ReadOnlyAssetManager extends \yii\web\AssetManager
     public function init(): void
     {
         if ($this->assetDevelopmentMode) {
-            $this->baseUrl = '/dev-assets';
             $this->basePath = '/tmp/assets';
             $this->forceCopy = true;
             return;
