@@ -43,7 +43,6 @@ class AssetHelper
     {
         // We register an autoloader to handle missing classes.
         $autoLoader = function ($class): void {
-            echo "Autoloading: $class\n";
             $trace = \debug_backtrace(0, 2);
 
             $type = "class";

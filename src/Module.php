@@ -178,6 +178,10 @@ NGINX
          * BEGIN COMPOSER
          */
         $context->from('composer:2.0');
+        $context->run('apk add --update npm');
+        $context->run('npm install @babel/core @babel/cli @babel/preset-env');
+        $context->run('npm install -g @babel/core');
+
         $packageManagerFiles = [
             'composer.json',
             'composer.lock',
@@ -192,11 +196,6 @@ NGINX
         }
 
         $context->run('cd /build && composer config platform-check false');
-        $context->run('apk add --update npm');
-        $context->run('npm install @babel/core @babel/cli @babel/preset-env');
-        $context->run('npm install -g @babel/core');
-
-
         $context->run('cd /build && composer install --no-autoloader --ignore-platform-reqs --prefer-dist');
 
 
