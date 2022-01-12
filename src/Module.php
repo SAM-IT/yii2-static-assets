@@ -177,7 +177,7 @@ NGINX
         /**
          * BEGIN COMPOSER
          */
-        $context->from('composer:2.0');
+        $context->from('composer:2.2.4');
         $context->run('apk add --update npm');
         $context->run('npm install @babel/core @babel/cli @babel/preset-env');
         $context->run('npm install -g @babel/core');
