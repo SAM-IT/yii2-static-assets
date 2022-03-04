@@ -22,6 +22,8 @@ jobs:
         php: ['7.4', '8.1']
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -42,8 +44,6 @@ jobs:
         run: composer install --prefer-dist
       - name: Run tests
         run: composer test -- --coverage-xml
-      - name: Get Ocular
-        run: wget https://scrutinizer-ci.com/ocular.phar
       - name: Push code coverage
         run: ~/.composer/vendor/bin/ocular code-coverage:upload --format=php-clover tests/_output/coverage.xml
   release:
