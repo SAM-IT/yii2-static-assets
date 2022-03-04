@@ -26,7 +26,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          tools: pecl
+          tools: pecl, scrutinizer/ocular
           coverage: pcov
           extensions: mbstring, curl, json, pdo-sqlite
       - name: Get composer cache directory
@@ -45,7 +45,7 @@ jobs:
       - name: Get Ocular
         run: wget https://scrutinizer-ci.com/ocular.phar
       - name: Push code coverage
-        run: php ocular.phar code-coverage:upload --format=php-clover tests/_output/coverage.xml
+        run: ~/.composer/vendor/bin/ocular code-coverage:upload --format=php-clover tests/_output/coverage.xml
   release:
     if: github.ref == 'refs/heads/master'
     name: Automated release
