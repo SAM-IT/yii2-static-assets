@@ -61,5 +61,5 @@ jobs:
           -p conventional-changelog-conventionalcommits
           -p semantic-release
           -- semantic-release
-          env:
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
