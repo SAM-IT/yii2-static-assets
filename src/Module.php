@@ -178,9 +178,7 @@ NGINX
          * BEGIN COMPOSER
          */
         $context->from('composer:2.2.4');
-        $context->run('apk add --update npm');
-        $context->run('npm install @babel/core @babel/cli @babel/preset-env');
-        $context->run('npm install -g @babel/core');
+        $context->run('apk add --no-cache npm');
 
         $packageManagerFiles = [
             'composer.json',
@@ -197,6 +195,9 @@ NGINX
 
         $context->run('cd /build && composer config platform-check false');
         $context->run('cd /build && composer install --no-autoloader --ignore-platform-reqs --prefer-dist');
+        if (file_exists("$basePath/package-lock.json")) {
+            $context->run('cd /build && npm ci --no-audit');
+        }
 
 
         // Add the actual source code.
