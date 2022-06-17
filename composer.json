@@ -3,11 +3,14 @@
     "description": "Generate static assets and build a docker nginx container",
     "type": "yii2-extension",
     "require-dev": {
-        "squizlabs/php_codesniffer": "^3.5",
         "codeception/codeception": "> 4",
         "yiisoft/yii2": "> 2",
-        "brainmaestro/composer-git-hooks": "^2.8",
-        "codeception/module-yii2": "^1.1"
+        "codeception/module-yii2": "^1.1",
+        "symplify/easy-coding-standard": "^11.0",
+        "captainhook/captainhook": "^5.10",
+        "phpstan/phpstan": "^1.7",
+        "ramsey/conventional-commits": "^1.3"
+
     },
     "license": "MIT",
     "authors": [
@@ -38,23 +41,16 @@
         ]
     },
     "extra": {
-        "bootstrap": "SamIT\\Yii2\\StaticAssets\\Bootstrap",
-        "hooks": {
-            "pre-commit": [
-                "echo committing as $(git config user.name) &&",
-                "composer lint-fix  &&",
-                "composer lint &&",
-                "composer test"
-            ],
-            "commit-msg": [
-                "npx commitlint -e"
-            ]
-        }
+        "bootstrap": "SamIT\\Yii2\\StaticAssets\\Bootstrap"
     },
     "scripts": {
-        "post-install-cmd": "cghooks add --ignore-lock",
         "test": "codecept run",
-        "lint": "vendor/bin/phpcs",
-        "lint-fix": "vendor/bin/phpcbf"
+        "lint": "vendor/bin/ecs",
+        "lint-fix": "vendor/bin/ecs --fix"
+    },
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
+        }
     }
 }

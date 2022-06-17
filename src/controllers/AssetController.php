@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace SamIT\Yii2\StaticAssets\controllers;
@@ -51,7 +52,7 @@ class AssetController extends Controller
         if (isset($this->defaultBundle)) {
             $class = $this->defaultBundle;
             /** @var AssetBundle $bundle */
-            $bundle = new $class;
+            $bundle = new $class();
             $bundle->publish($this->getAssetManager($path));
             $this->stdout("Copying {$bundle->basePath} to {$path}/default...\n", Console::FG_CYAN);
             echo "$bundle->basePath";

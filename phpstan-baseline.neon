@@ -1,0 +1,251 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Cannot call method getComponents\\(\\) on yii\\\\base\\\\Module\\|null\\.$#"
+			count: 1
+			path: src/Module.php
+
+		-
+			message: "#^Method SamIT\\\\Yii2\\\\StaticAssets\\\\Module\\:\\:createNginxBlock\\(\\) has parameter \\$directives with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Module.php
+
+		-
+			message: "#^Method SamIT\\\\Yii2\\\\StaticAssets\\\\Module\\:\\:createNginxBlock\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Module.php
+
+		-
+			message: "#^Offset 'file' does not exist on array\\{function\\: string, line\\?\\: int, file\\?\\: string, class\\?\\: class\\-string, type\\?\\: '\\-\\>'\\|'\\:\\:', args\\?\\: array, object\\?\\: object\\}\\.$#"
+			count: 1
+			path: src/Module.php
+
+		-
+			message: "#^Parameter \\#1 \\$path of function dirname expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/Module.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of static method SamIT\\\\Yii2\\\\StaticAssets\\\\Module\\:\\:resolvePath\\(\\) expects string, string\\|false given\\.$#"
+			count: 3
+			path: src/Module.php
+
+		-
+			message: "#^Property SamIT\\\\Yii2\\\\StaticAssets\\\\Module\\:\\:\\$environmentVariables has no type specified\\.$#"
+			count: 1
+			path: src/Module.php
+
+		-
+			message: "#^Property SamIT\\\\Yii2\\\\StaticAssets\\\\Module\\:\\:\\$excludedPatterns type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Module.php
+
+		-
+			message: "#^Property SamIT\\\\Yii2\\\\StaticAssets\\\\Module\\:\\:\\$fastcgiParams has no type specified\\.$#"
+			count: 1
+			path: src/Module.php
+
+		-
+			message: "#^Property SamIT\\\\Yii2\\\\StaticAssets\\\\Module\\:\\:\\$nginxConfig has no type specified\\.$#"
+			count: 1
+			path: src/Module.php
+
+		-
+			message: "#^Method SamIT\\\\Yii2\\\\StaticAssets\\\\ReadOnlyAssetManager\\:\\:hash\\(\\) should return string but returns mixed\\.$#"
+			count: 1
+			path: src/ReadOnlyAssetManager.php
+
+		-
+			message: "#^Method SamIT\\\\Yii2\\\\StaticAssets\\\\ReadOnlyAssetManager\\:\\:publish\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/ReadOnlyAssetManager.php
+
+		-
+			message: "#^Method SamIT\\\\Yii2\\\\StaticAssets\\\\ReadOnlyAssetManager\\:\\:publish\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/ReadOnlyAssetManager.php
+
+		-
+			message: "#^Method SamIT\\\\Yii2\\\\StaticAssets\\\\ReadOnlyAssetManager\\:\\:publishDirectory\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/ReadOnlyAssetManager.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function rtrim expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/ReadOnlyAssetManager.php
+
+		-
+			message: "#^Property yii\\\\web\\\\AssetManager\\:\\:\\$basePath \\(string\\) does not accept string\\|false\\.$#"
+			count: 1
+			path: src/ReadOnlyAssetManager.php
+
+		-
+			message: "#^Return type \\(void\\) of method SamIT\\\\Yii2\\\\StaticAssets\\\\ReadOnlyAssetManager\\:\\:publishFile\\(\\) should be compatible with return type \\(array\\<string\\>\\) of method yii\\\\web\\\\AssetManager\\:\\:publishFile\\(\\)$#"
+			count: 1
+			path: src/ReadOnlyAssetManager.php
+
+		-
+			message: "#^Method SamIT\\\\Yii2\\\\StaticAssets\\\\controllers\\\\AssetController\\:\\:actionPublish\\(\\) has parameter \\$path with no type specified\\.$#"
+			count: 1
+			path: src/controllers/AssetController.php
+
+		-
+			message: "#^Method SamIT\\\\Yii2\\\\StaticAssets\\\\controllers\\\\AssetController\\:\\:getAssetManager\\(\\) has parameter \\$fullPath with no type specified\\.$#"
+			count: 1
+			path: src/controllers/AssetController.php
+
+		-
+			message: "#^Method SamIT\\\\Yii2\\\\StaticAssets\\\\controllers\\\\AssetController\\:\\:getAssetManager\\(\\) should return yii\\\\web\\\\AssetManager but returns object\\|null\\.$#"
+			count: 1
+			path: src/controllers/AssetController.php
+
+		-
+			message: "#^Parameter \\#1 \\$alias of static method yii\\\\BaseYii\\:\\:getAlias\\(\\) expects string, array given\\.$#"
+			count: 1
+			path: src/controllers/AssetController.php
+
+		-
+			message: "#^Part \\$this\\-\\>applicationPath \\(array\\) of encapsed string cannot be cast to string\\.$#"
+			count: 1
+			path: src/controllers/AssetController.php
+
+		-
+			message: "#^Property SamIT\\\\Yii2\\\\StaticAssets\\\\controllers\\\\AssetController\\:\\:\\$applicationPath \\(array\\) does not accept string\\.$#"
+			count: 1
+			path: src/controllers/AssetController.php
+
+		-
+			message: "#^Property SamIT\\\\Yii2\\\\StaticAssets\\\\controllers\\\\AssetController\\:\\:\\$applicationPath type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/controllers/AssetController.php
+
+		-
+			message: "#^Property SamIT\\\\Yii2\\\\StaticAssets\\\\controllers\\\\AssetController\\:\\:\\$baseUrl has no type specified\\.$#"
+			count: 1
+			path: src/controllers/AssetController.php
+
+		-
+			message: "#^Property SamIT\\\\Yii2\\\\StaticAssets\\\\controllers\\\\AssetController\\:\\:\\$defaultBundle has no type specified\\.$#"
+			count: 1
+			path: src/controllers/AssetController.php
+
+		-
+			message: "#^Property SamIT\\\\Yii2\\\\StaticAssets\\\\controllers\\\\AssetController\\:\\:\\$excludedPatterns type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/controllers/AssetController.php
+
+		-
+			message: "#^Method SamIT\\\\Yii2\\\\StaticAssets\\\\controllers\\\\BuildController\\:\\:optionAliases\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/controllers/BuildController.php
+
+		-
+			message: "#^Property SamIT\\\\Yii2\\\\StaticAssets\\\\controllers\\\\BuildController\\:\\:\\$image \\(string\\) in isset\\(\\) is not nullable\\.$#"
+			count: 1
+			path: src/controllers/BuildController.php
+
+		-
+			message: "#^Result of && is always false\\.$#"
+			count: 1
+			path: src/controllers/BuildController.php
+
+		-
+			message: "#^Method SamIT\\\\Yii2\\\\StaticAssets\\\\helpers\\\\AssetHelper\\:\\:findAssetBundles\\(\\) has parameter \\$excludedPatterns with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/helpers/AssetHelper.php
+
+		-
+			message: "#^Method SamIT\\\\Yii2\\\\StaticAssets\\\\helpers\\\\AssetHelper\\:\\:findAssetBundles\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/helpers/AssetHelper.php
+
+		-
+			message: "#^Method SamIT\\\\Yii2\\\\StaticAssets\\\\helpers\\\\AssetHelper\\:\\:getClassNames\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/helpers/AssetHelper.php
+
+		-
+			message: "#^Method SamIT\\\\Yii2\\\\StaticAssets\\\\helpers\\\\AssetHelper\\:\\:parseClass\\(\\) has parameter \\$tokens with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/helpers/AssetHelper.php
+
+		-
+			message: "#^Method SamIT\\\\Yii2\\\\StaticAssets\\\\helpers\\\\AssetHelper\\:\\:parseNameSpace\\(\\) has parameter \\$tokens with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/helpers/AssetHelper.php
+
+		-
+			message: "#^Method SamIT\\\\Yii2\\\\StaticAssets\\\\helpers\\\\AssetHelper\\:\\:popUntil\\(\\) has parameter \\$markers with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/helpers/AssetHelper.php
+
+		-
+			message: "#^Method SamIT\\\\Yii2\\\\StaticAssets\\\\helpers\\\\AssetHelper\\:\\:popUntil\\(\\) has parameter \\$tokens with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/helpers/AssetHelper.php
+
+		-
+			message: "#^Method SamIT\\\\Yii2\\\\StaticAssets\\\\helpers\\\\AssetHelper\\:\\:popUntil\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/helpers/AssetHelper.php
+
+		-
+			message: "#^Method SamIT\\\\Yii2\\\\StaticAssets\\\\helpers\\\\AssetHelper\\:\\:publishAssets\\(\\) has parameter \\$baseDir with no type specified\\.$#"
+			count: 1
+			path: src/helpers/AssetHelper.php
+
+		-
+			message: "#^Method SamIT\\\\Yii2\\\\StaticAssets\\\\helpers\\\\AssetHelper\\:\\:publishAssets\\(\\) has parameter \\$excludedPatterns with no type specified\\.$#"
+			count: 1
+			path: src/helpers/AssetHelper.php
+
+		-
+			message: "#^Parameter \\#1 \\$code of function token_get_all expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/helpers/AssetHelper.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function gzclose expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: src/helpers/AssetHelper.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function gzwrite expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: src/helpers/AssetHelper.php
+
+		-
+			message: "#^Parameter \\#2 \\$data of function gzwrite expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/helpers/AssetHelper.php
+
+		-
+			message: "#^Parameter \\#2 \\$subject of function preg_match expects string, string\\|false given\\.$#"
+			count: 3
+			path: src/helpers/AssetHelper.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: src/helpers/AssetHelper.php
+
+		-
+			message: "#^Parameter \\#3 \\$subject of function preg_replace expects array\\|string, string\\|false given\\.$#"
+			count: 1
+			path: tests/unit/ModuleTest.php
+
+		-
+			message: "#^Property tests\\\\ModuleTest\\:\\:\\$module \\(SamIT\\\\Yii2\\\\StaticAssets\\\\Module\\) does not accept yii\\\\base\\\\Module\\|null\\.$#"
+			count: 1
+			path: tests/unit/ModuleTest.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$module contains unknown class SamIT\\\\Yii2\\\\StaticAssets\\\\StaticAssets\\.$#"
+			count: 2
+			path: tests/unit/StaticAssetsTest.php
+
+		-
+			message: "#^Variable \\$module in PHPDoc tag @var does not exist\\.$#"
+			count: 1
+			path: tests/unit/StaticAssetsTest.php

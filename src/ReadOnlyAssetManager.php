@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace SamIT\Yii2\StaticAssets;
@@ -30,7 +31,7 @@ class ReadOnlyAssetManager extends \yii\web\AssetManager
         $this->baseUrl = \rtrim(Yii::getAlias($this->baseUrl), '/');
     }
 
-    protected function publishFile($src)
+    protected function publishFile($src): void
     {
         throw new NotSupportedException('Publishing files is not supported, publish directories instead');
     }

@@ -1,0 +1,13 @@
+parameters:
+  level: 9
+  paths:
+    - src
+    - tests
+  excludePaths:
+    - tests/_support/*
+  treatPhpDocTypesAsCertain: false
+  ignoreErrors:
+    - "#Casting to string something that's already string#"
+  reportUnmatchedIgnoredErrors: false
+includes:
+- phpstan-baseline.neon

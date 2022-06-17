@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace SamIT\Yii2\StaticAssets\controllers;
@@ -89,7 +90,6 @@ class BuildController extends Controller
 
     public function options($actionID)
     {
-
         $result = parent::options($actionID);
         switch ($actionID) {
             case 'create-context':

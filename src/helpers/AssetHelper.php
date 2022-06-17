@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace SamIT\Yii2\StaticAssets\helpers;
@@ -11,7 +12,6 @@ use yii\web\AssetManager;
 
 class AssetHelper
 {
-
     public static function isAssetBundle(string $class): bool
     {
         if (!\class_exists($class)) {
@@ -53,7 +53,7 @@ class AssetHelper
             ) {
                 echo "Parsing file: {$trace[1]['file']}";
                 $file = \file_get_contents($trace[1]['file']);
-                $pattern = "/class .* implements.*" . \strtr($class, ['\\' => '\\\\']) .".*?\{/msi";
+                $pattern = "/class .* implements.*" . \strtr($class, ['\\' => '\\\\']) . ".*?\{/msi";
                 if (\preg_match($pattern, $file, $matches)) {
                     //Interface!!
                     $type = "interface";
