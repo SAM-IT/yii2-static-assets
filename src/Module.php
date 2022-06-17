@@ -218,10 +218,10 @@ NGINX
         $packages = [
             'nginx',
             'gettext',
-            'envsubst'
         ];
 
         $context->run('apk add --update --no-cache ' . \implode(' ', $packages));
+        $context->run('apk add --update --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/');
         $context->add('/entrypoint.sh', $this->createEntrypoint());
         $context->run('chmod +x /entrypoint.sh');
         $context->add('/nginx.conf.template', $this->createNginxConfig());
