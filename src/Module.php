@@ -217,6 +217,7 @@ NGINX
         $packages = [
             'nginx',
             'gettext',
+            'envsubst'
         ];
 
         $context->run('apk add --update --no-cache ' . \implode(' ', $packages));
