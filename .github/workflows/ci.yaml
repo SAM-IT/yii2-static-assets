@@ -10,10 +10,9 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
-          tools: phpcs
-          extensions: xmlwriter
+          tools: symplify/easy-coding-standard
       - name: Test code style
-        run: phpcs
+        run: ecs
   test:
     name: Run tests
     runs-on: ubuntu-latest
@@ -26,11 +25,9 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          tools: pecl, symplify/easy-coding-standard, phpstan
+          tools: pecl, phpstan
           coverage: pcov
           extensions: mbstring, curl, json, pdo-sqlite
-      - name: Test code style
-        run: ecs
       - name: Get composer cache directory
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
