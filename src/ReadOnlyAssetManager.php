@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SamIT\Yii2\StaticAssets;
 
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\base\NotSupportedException;
 
 /**
@@ -28,7 +29,11 @@ class ReadOnlyAssetManager extends \yii\web\AssetManager
             return;
         }
         $this->basePath = Yii::getAlias($this->basePath);
-        $this->baseUrl = \rtrim(Yii::getAlias($this->baseUrl), '/');
+        $baseUrl = Yii::getAlias($this->baseUrl);
+        if ($baseUrl === false) {
+            throw new InvalidConfigException("Base URL is not a valid alias");
+        }
+        $this->baseUrl = \rtrim($baseUrl, '/');
     }
 
     protected function publishFile($src): void

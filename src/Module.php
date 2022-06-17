@@ -325,9 +325,9 @@ NGINX
      */
     private function getConsoleEntryScript(): string
     {
-        $full = \array_slice(\debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), -1)[0]['file'];
+        $full = \array_slice(\debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), -1)[0]['file'] ?? '';
         $relative = \strtr($full, [\dirname(\Yii::getAlias('@app')) => '']);
-        if ($relative === $full) {
+        if ($relative === $full || $full === '') {
             throw new InvalidConfigException("The console entry script must be located inside the @app directory.");
         }
         return \ltrim($relative, '/');

@@ -20,7 +20,7 @@
         }
     ],
     "require": {
-        "php": "> 7.4",
+        "php": ">= 8.1",
         "sam-it/docker-php": ">= 1.0.5"
     },
     "repositories": [
