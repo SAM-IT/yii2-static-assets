@@ -178,7 +178,7 @@ NGINX
         /**
          * BEGIN COMPOSER
          */
-        $context->from('composer:2.2.4');
+        $context->from('composer:2.3.7');
         $context->run('apk add --no-cache npm');
 
         $packageManagerFiles = [
@@ -225,7 +225,7 @@ NGINX
         $context->add('/entrypoint.sh', $this->createEntrypoint());
         $context->run('chmod +x /entrypoint.sh');
         $context->add('/nginx.conf.template', $this->createNginxConfig());
-        $context->run('PHPFPM=test RESOLVER=127.0.0.1 envsubst "\$PHPFPM \$RESOLVER" < /nginx.conf.template > /tmp/nginx.conf');
+        $context->run('RESOLVER=127.0.0.1 PHPFPM=test envsubst "\$PHPFPM" "\$RESOLVER" < /nginx.conf.template > /tmp/nginx.conf');
         $context->run("nginx -t -c /tmp/nginx.conf");
         $context->entrypoint(["/entrypoint.sh"]);
         $context->command("EXPOSE 80");
@@ -313,7 +313,7 @@ NGINX
             $variables[] = '\\$' . $name;
         }
 
-        $result[] = 'envsubst "' . \implode(' ', $variables) . '" < /nginx.conf.template > /nginx.conf';
+        $result[] = 'envsubst "' . \implode('" "', $variables) . '" < /nginx.conf.template > /nginx.conf';
         $result[] = 'cat nginx.conf';
         $result[] = 'exec nginx -c /nginx.conf';
         return \implode("\n", $result);
