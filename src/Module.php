@@ -217,15 +217,14 @@ NGINX
         $context->from('alpine:edge');
         $packages = [
             'nginx',
-            'gettext',
+            'gettext=0.21-r2',
         ];
 
         $context->run('apk add --update --no-cache ' . \implode(' ', $packages));
-        $context->run('apk add --update --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ envsubst');
         $context->add('/entrypoint.sh', $this->createEntrypoint());
         $context->run('chmod +x /entrypoint.sh');
         $context->add('/nginx.conf.template', $this->createNginxConfig());
-        $context->run('RESOLVER=127.0.0.1 PHPFPM=test envsubst "\$PHPFPM" "\$RESOLVER" < /nginx.conf.template > /tmp/nginx.conf');
+        $context->run('RESOLVER=127.0.0.1 PHPFPM=test envsubst "\$PHPFPM \$RESOLVER" < /nginx.conf.template > /tmp/nginx.conf');
         $context->run("nginx -t -c /tmp/nginx.conf");
         $context->entrypoint(["/entrypoint.sh"]);
         $context->command("EXPOSE 80");
@@ -313,7 +312,7 @@ NGINX
             $variables[] = '\\$' . $name;
         }
 
-        $result[] = 'envsubst "' . \implode('" "', $variables) . '" < /nginx.conf.template > /nginx.conf';
+        $result[] = 'envsubst ' . \implode(' ', $variables) . ' < /nginx.conf.template > /nginx.conf';
         $result[] = 'cat nginx.conf';
         $result[] = 'exec nginx -c /nginx.conf';
         return \implode("\n", $result);
