@@ -312,7 +312,7 @@ NGINX
             $variables[] = '\\$' . $name;
         }
 
-        $result[] = 'envsubst ' . \implode(' ', $variables) . ' < /nginx.conf.template > /nginx.conf';
+        $result[] = 'envsubst "' . \implode(' ', $variables) . '" < /nginx.conf.template > /nginx.conf';
         $result[] = 'cat nginx.conf';
         $result[] = 'exec nginx -c /nginx.conf';
         return \implode("\n", $result);
