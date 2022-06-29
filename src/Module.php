@@ -217,7 +217,7 @@ NGINX
         $context->from('alpine:edge');
         $packages = [
             'nginx',
-            'gettext=0.21-r2',
+            'gettext',
         ];
 
         $context->run('apk add --update --no-cache ' . \implode(' ', $packages));
