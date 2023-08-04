@@ -267,7 +267,7 @@ NGINX
         $nginxConfig = $this->nginxConfig;
 
         $fastcgiConfig = [
-            'fastcgi_pass' => '/alloc/data/phpfpm.sock',
+            'fastcgi_pass' => 'unix:/alloc/data/phpfpm.sock',
             'fastcgi_param SCRIPT_FILENAME' => $this->entryScript,
             'fastcgi_param SCRIPT_NAME' => '/' . \basename($this->entryScript)
         ];
