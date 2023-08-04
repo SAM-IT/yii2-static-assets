@@ -220,7 +220,7 @@ NGINX
         $context->add('/entrypoint.sh', $this->createEntrypoint());
         $context->run('chmod +x /entrypoint.sh');
         $context->add('/nginx.conf', $this->createNginxConfig());
-        $context->run("nginx -t -c /tmp/nginx.conf");
+        $context->run("nginx -t -c /nginx.conf");
         $context->entrypoint(["/entrypoint.sh"]);
         $context->command("EXPOSE 80");
         $context->copyFromLayer('/www/assets', "0", "/build/assets");
