@@ -198,6 +198,8 @@ NGINX
         $context->run('cd /build && composer install --no-autoloader --ignore-platform-reqs --prefer-dist');
         if (file_exists("$basePath/package-lock.json")) {
             $context->run('cd /build && npm ci --no-audit');
+            // Recursively compress individual files in node_modules
+            $context->run('gzip -r /build/node_modules -k');
         }
 
 
@@ -229,6 +231,9 @@ NGINX
         $context->entrypoint(["/entrypoint.sh"]);
         $context->command("EXPOSE 80");
         $context->copyFromLayer('/www/assets', "0", "/build/assets");
+        if (file_exists("$basePath/package-lock.json")) {
+            $context->copyFromLayer('/www/node_modules', "0", "/build/node_modules");
+        }
         $context->copyFromLayer('/www', "0", "/build/assets/default");
         return $context;
     }

@@ -205,28 +205,6 @@ class AssetHelper
         return $popped;
     }
 
-    /**
-     * Recursively creates gzip files for all files in the directory.
-     * @param string $baseDir
-     */
-    public static function createGzipFiles(string $baseDir): void
-    {
-        // We do not care about memory usage and assume all files fit in memory.
-        $iter = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($baseDir, RecursiveDirectoryIterator::SKIP_DOTS),
-            RecursiveIteratorIterator::LEAVES_ONLY,
-            RecursiveIteratorIterator::CATCH_GET_CHILD // Ignore "Permission denied"
-        );
-        /** @var \SplFileInfo $file */
-        foreach ($iter as $file) {
-            if ($file->getExtension() !== 'gz') {
-                $handle = \gzopen($file->getPathname() . '.gz', 'w9');
-                \gzwrite($handle, \file_get_contents($file->getPathname()));
-                \gzclose($handle);
-            }
-        }
-    }
-
     public static function publishAssets(AssetManager $assetManager, $baseDir, $excludedPatterns = []): void
     {
         foreach (self::findAssetBundles($baseDir, $excludedPatterns) as $bundle) {

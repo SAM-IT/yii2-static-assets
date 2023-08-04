@@ -59,9 +59,6 @@ class AssetController extends Controller
 
             \passthru("ls -la {$bundle->basePath}");
             FileHelper::copyDirectory($bundle->basePath, "$path/default");
-            AssetHelper::createGzipFiles("$path/default");
-
-
             $this->stdout("OK\n", Console::FG_GREEN);
         } else {
             \mkdir("$path/default");
@@ -78,7 +75,9 @@ class AssetController extends Controller
 
 
         $this->stdout("Compressing assets... ", Console::FG_CYAN);
-        AssetHelper::createGzipFiles($path);
+        passthru("gzip -k -r $path");
+        $this->stdout("OK\n", Console::FG_GREEN);
+
         $this->stdout("OK\n", Console::FG_GREEN);
     }
 
