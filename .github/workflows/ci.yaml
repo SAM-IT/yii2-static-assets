@@ -6,13 +6,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.1'
-          tools: symplify/easy-coding-standard
+      - uses: ramsey/composer-install@v2
       - name: Test code style
-        run: ecs
+        run: vendor/bin/ecs
   test:
     name: Run tests
     runs-on: ubuntu-latest
@@ -28,17 +24,7 @@ jobs:
           tools: pecl, phpstan
           coverage: pcov
           extensions: mbstring, curl, json, pdo-sqlite
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - name: Cache dependencies
-        uses: actions/cache@v1
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ matrix.php }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: ${{ matrix.php }}-composer-
-      - name: Install dependencies
-        run: composer install --prefer-dist
+      - uses: ramsey/composer-install@v2
       - name: Static analysis
         run: phpstan
       - name: Run tests
