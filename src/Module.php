@@ -84,9 +84,7 @@ NGINX
             'sendfile' => 'on',
             'keepalive_timeout' => 65,
             'gzip_static' => 'on',
-            'resolver' => '${RESOLVER} valid=10s ipv6=off',
             'server' => [
-                'set' => '$upstream_endpoint ${PHPFPM}',
                 'listen' => '80 default',
                 'root' => '/www',
                 'try_files' => '$uri @php',
@@ -119,10 +117,6 @@ NGINX
 
 
 
-    ];
-
-    public $environmentVariables = [
-        'RESOLVER', 'PHPFPM'
     ];
 
     public function init(): void
@@ -178,8 +172,8 @@ NGINX
         /**
          * BEGIN COMPOSER
          */
-        $context->from('composer:2.3.7');
-        $context->run('apk add --no-cache npm');
+        $context->from('composer:lts');
+        $context->run('apk add --no-cache npm gzip');
 
         $packageManagerFiles = [
             'composer.json',
@@ -199,7 +193,7 @@ NGINX
         if (file_exists("$basePath/package-lock.json")) {
             $context->run('cd /build && npm ci --no-audit');
             // Recursively compress individual files in node_modules
-            $context->run('gzip -r /build/node_modules -k');
+            $context->run('gzip -r /build/node_modules -k -f');
         }
 
 
@@ -225,8 +219,7 @@ NGINX
         $context->run('apk add --update --no-cache ' . \implode(' ', $packages));
         $context->add('/entrypoint.sh', $this->createEntrypoint());
         $context->run('chmod +x /entrypoint.sh');
-        $context->add('/nginx.conf.template', $this->createNginxConfig());
-        $context->run('RESOLVER=127.0.0.1 PHPFPM=test envsubst "\$PHPFPM \$RESOLVER" < /nginx.conf.template > /tmp/nginx.conf');
+        $context->add('/nginx.conf', $this->createNginxConfig());
         $context->run("nginx -t -c /tmp/nginx.conf");
         $context->entrypoint(["/entrypoint.sh"]);
         $context->command("EXPOSE 80");
@@ -274,7 +267,7 @@ NGINX
         $nginxConfig = $this->nginxConfig;
 
         $fastcgiConfig = [
-            'fastcgi_pass' => '$upstream_endpoint',
+            'fastcgi_pass' => '/alloc/data/phpfpm.sock',
             'fastcgi_param SCRIPT_FILENAME' => $this->entryScript,
             'fastcgi_param SCRIPT_NAME' => '/' . \basename($this->entryScript)
         ];
@@ -308,17 +301,6 @@ NGINX
         $result = [];
         $result[] = '#!/bin/sh';
 
-        $variables = [];
-        // Check for variables.
-        foreach ($this->environmentVariables as $name) {
-            $result[] = \strtr('if [ -z "${name}" ]; then echo "Variable \${name} is required."; exit 1; fi', [
-                '{name}' => $name
-            ]);
-            $variables[] = '\\$' . $name;
-        }
-
-        $result[] = 'envsubst "' . \implode(' ', $variables) . '" < /nginx.conf.template > /nginx.conf';
-        $result[] = 'cat nginx.conf';
         $result[] = 'exec nginx -c /nginx.conf';
         return \implode("\n", $result);
     }
