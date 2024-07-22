@@ -191,7 +191,7 @@ NGINX
         $context->run('cd /build && composer config platform-check false');
         $context->run('cd /build && composer install --no-autoloader --ignore-platform-reqs --prefer-dist');
         if (file_exists("$basePath/package-lock.json")) {
-            $context->run('--mount=type=secret,id=npmrc,target=/build/.npmrc cd /build && npm ci  --ignore-scripts --no-audit');
+            $context->run('--mount=type=secret,id=npmrc,target=/build/.npmrc cd /build && npm ci --no-audit');
             // Recursively compress individual files in node_modules
             $context->run('gzip -r /build/node_modules -k -f');
         }
