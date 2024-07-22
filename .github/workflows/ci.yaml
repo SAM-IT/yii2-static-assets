@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ramsey/composer-install@v2
+      - uses: ramsey/composer-install@v3
       - name: Test code style
         run: vendor/bin/ecs
   test:
@@ -24,7 +24,7 @@ jobs:
           tools: pecl, phpstan
           coverage: pcov
           extensions: mbstring, curl, json, pdo-sqlite
-      - uses: ramsey/composer-install@v2
+      - uses: ramsey/composer-install@v3
       - name: Static analysis
         run: phpstan
       - name: Run tests
